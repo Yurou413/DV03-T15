@@ -1,23 +1,12 @@
-"First Nations status","Calendar year","Sum(Hospitalisations)"
-"First Nations people",2011,1167
-"First Nations people",2012,1404
-"First Nations people",2013,1414
-"First Nations people",2014,1407
-"First Nations people",2015,1600
-"First Nations people",2016,1669
-"First Nations people",2017,1733
-"First Nations people",2018,1930
-"First Nations people",2019,1856
-"First Nations people",2020,2290
-"First Nations people",2021,2220
-"Non-Indigenous",2011,31997
-"Non-Indigenous",2012,31790
-"Non-Indigenous",2013,32839
-"Non-Indigenous",2014,30785
-"Non-Indigenous",2015,34773
-"Non-Indigenous",2016,36684
-"Non-Indigenous",2017,37030
-"Non-Indigenous",2018,37198
-"Non-Indigenous",2019,37482
-"Non-Indigenous",2020,35186
-"Non-Indigenous",2021,36755
+"Calendar year","First Nations people","Non-Indigenous","Total"
+2011,1167,31997,33164
+2012,1404,31790,33194
+2013,1414,32839,34253
+2014,1407,30785,32192
+2015,1600,34773,36373
+2016,1669,36684,38353
+2017,1733,37030,38763
+2018,1930,37198,39128
+2019,1856,37482,39338
+2020,2290,35186,37476
+2021,2220,36755,38975
