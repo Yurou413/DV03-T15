@@ -1,0 +1,130 @@
+.q4-region-chart {
+    --q4-chart-text: var(--text-primary, #0f172a);
+    --q4-chart-muted: var(--text-secondary, #475569);
+    --q4-chart-border: var(--border, #e2e8f0);
+    --q4-chart-surface: var(--surface, #fff);
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    color: var(--q4-chart-text);
+    font-family: var(--font-sans, system-ui, sans-serif);
+}
+
+.q4-chart-intro,
+.q4-chart-note {
+    color: var(--q4-chart-muted);
+}
+
+.q4-region-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem 1.5rem;
+    margin: .85rem 0 1rem;
+    font-size: .9rem;
+}
+
+.q4-region-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+}
+
+.q4-region-swatch {
+    width: .9rem;
+    height: .9rem;
+    border-radius: 2px;
+}
+
+.q4-donut-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+}
+
+.q4-donut-card {
+    min-width: 0;
+    padding: .8rem 1rem .5rem;
+    border: 1px solid var(--q4-chart-border);
+    border-radius: .75rem;
+    background: var(--q4-chart-surface);
+    text-align: center;
+}
+
+.q4-donut-card h3 {
+    margin: 0;
+    color: var(--q4-chart-text);
+    font-size: 1rem;
+}
+
+.q4-donut-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
+}
+
+.q4-donut-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.q4-donut-slice {
+    cursor: pointer;
+    stroke: var(--q4-chart-surface);
+    stroke-width: 2px;
+    transition: opacity .12s ease;
+}
+
+.q4-donut-slice:hover {
+    opacity: .8;
+}
+
+.q4-donut-slice:focus {
+    stroke: var(--q4-chart-text);
+    stroke-width: 3px;
+    outline: none;
+}
+
+.q4-donut-total {
+    fill: var(--q4-chart-text);
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.q4-donut-total-label {
+    fill: var(--q4-chart-muted);
+    font-size: 12px;
+}
+
+.q4-donut-tooltip {
+    position: absolute;
+    z-index: 2;
+    display: none;
+    max-width: min(250px, calc(100% - 1rem));
+    padding: .65rem .8rem;
+    border: 1px solid var(--q4-chart-border);
+    border-radius: .5rem;
+    background: var(--q4-chart-surface);
+    box-shadow: 0 4px 16px rgba(15, 23, 42, .16);
+    color: var(--q4-chart-text);
+    font-size: .82rem;
+    line-height: 1.45;
+    white-space: pre-line;
+    pointer-events: none;
+}
+
+.q4-chart-note {
+    margin-top: 1rem;
+}
+
+.q4-chart-error {
+    color: #b91c1c;
+}
+
+@media (max-width: 640px) {
+    .q4-donut-grid {
+        grid-template-columns: 1fr;
+    }
+}
