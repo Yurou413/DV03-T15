@@ -1,38 +1,400 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Visualisation Project</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            background-color: #f9f9f9;
-            color: #333;
-        }
-        header {
-            margin-bottom: 24px;
-        }
-        h1 {
-            color: #2c3e50;
-        }
-        p {
-            line-height: 1.6;
-        }
-    </style>
+    <title>First Nations Hospitalised Injuries Dashboard | COS30045</title>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- Dashboard Stylesheet -->
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <header>
-        <h1>Data Visualisation Project</h1>
-        <p>Welcome to the COS30045 Data Visualisation project page.</p>
-    </header>
 
-    <main>
-        <section id="chart">
-            <!-- Visualisation content will go here -->
+    <!-- Tooltip Element for D3.js Interactions -->
+    <div id="tooltip" class="d3-tooltip" role="tooltip" aria-hidden="true"></div>
+
+    <div class="dashboard-wrapper">
+
+        <!-- ===================================================================
+             1. HEADER SECTION
+             =================================================================== -->
+        <header class="dashboard-header">
+            <div class="header-brand">
+                <div class="badge-wrapper">
+                    <span class="badge badge-primary">COS30045 Data Visualisation</span>
+                    <span class="badge badge-team">Group DV03-T15</span>
+                </div>
+                <h1>First Nations Hospitalised Injuries Dashboard</h1>
+                <p class="header-subtitle">
+                    An interactive exploration of hospitalised injury trends, mechanisms, and patient outcomes across
+                    Australia (2011–2021).
+                </p>
+            </div>
+            <div class="header-meta">
+                <div class="meta-item">
+                    <span>Target Cohort</span>
+                    <strong>First Nations Australians</strong>
+                </div>
+                <div class="meta-item">
+                    <span>Reporting Period</span>
+                    <strong>2011 – 2021</strong>
+                </div>
+            </div>
+        </header>
+
+        <!-- ===================================================================
+             2. KPI SUMMARY METRIC CARDS
+             =================================================================== -->
+        <section class="kpi-grid" aria-label="Key Summary Metrics">
+
+            <!-- KPI 1: Total Hospitalisations -->
+            <div class="kpi-card kpi-blue">
+                <div class="kpi-header">
+                    <span class="kpi-title">Total Hospitalisations</span>
+                    <span class="kpi-icon" aria-hidden="true">🏥</span>
+                </div>
+                <div class="kpi-value" id="kpi-hospitalisations">405,191</div>
+                <div class="kpi-subtext">
+                    <span class="trend-up">↑ 17.5%</span> from 2011 to 2021
+                </div>
+            </div>
+
+            <!-- KPI 2: Total Bed Days -->
+            <div class="kpi-card kpi-teal">
+                <div class="kpi-header">
+                    <span class="kpi-title">Total Bed Days</span>
+                    <span class="kpi-icon" aria-hidden="true">🛏️</span>
+                </div>
+                <div class="kpi-value" id="kpi-bed-days">1,947,460</div>
+                <div class="kpi-subtext">
+                    <span>Cumulative hospital stays</span>
+                </div>
+            </div>
+
+            <!-- KPI 3: Average Length of Stay -->
+            <div class="kpi-card kpi-amber">
+                <div class="kpi-header">
+                    <span class="kpi-title">Avg Length of Stay</span>
+                    <span class="kpi-icon" aria-hidden="true">⏱️</span>
+                </div>
+                <div class="kpi-value" id="kpi-avg-stay">4.8 <span
+                        style="font-size: 1.1rem; font-weight: 500;">Days</span></div>
+                <div class="kpi-subtext">
+                    <span>Per injury admission</span>
+                </div>
+            </div>
+
+            <!-- KPI 4: Peak Recorded Year -->
+            <div class="kpi-card kpi-red">
+                <div class="kpi-header">
+                    <span class="kpi-title">Peak Year Recorded</span>
+                    <span class="kpi-icon" aria-hidden="true">📈</span>
+                </div>
+                <div class="kpi-value" id="kpi-peak-year">2019</div>
+                <div class="kpi-subtext">
+                    <span>39,338 admissions recorded</span>
+                </div>
+            </div>
+
         </section>
-    </main>
-</body>
-</html>
 
+        <!-- ===================================================================
+             3. CONTROLS & FILTER TOOLBAR
+             =================================================================== -->
+        <section class="controls-panel" aria-label="Dashboard Filters">
+            <div class="controls-group">
+
+                <!-- Filter: Year Dropdown -->
+                <div class="control-item">
+                    <label for="filter-year" class="control-label">Year:</label>
+                    <select id="filter-year" class="select-input">
+                        <option value="all" selected>All Years (2011–2021)</option>
+                        <option value="2021">2021</option>
+                        <option value="2020">2020</option>
+                        <option value="2019">2019</option>
+                        <option value="2018">2018</option>
+                        <option value="2017">2017</option>
+                        <option value="2016">2016</option>
+                        <option value="2015">2015</option>
+                        <option value="2014">2014</option>
+                        <option value="2013">2013</option>
+                        <option value="2012">2012</option>
+                        <option value="2011">2011</option>
+                    </select>
+                </div>
+
+                <!-- Filter: Metric Toggle -->
+                <div class="control-item">
+                    <span class="control-label">Metric:</span>
+                    <div class="btn-group" role="group" aria-label="Metric Selection">
+                        <button type="button" class="btn-toggle active" data-metric="hospitalisations"
+                            id="btn-metric-hosp">Hospitalisations</button>
+                        <button type="button" class="btn-toggle" data-metric="bed_days" id="btn-metric-bed">Bed
+                            Days</button>
+                    </div>
+                </div>
+
+                <!-- Filter: External Cause / Category -->
+                <div class="control-item">
+                    <label for="filter-cause" class="control-label">Injury Cause:</label>
+                    <select id="filter-cause" class="select-input">
+                        <option value="all" selected>All Causes</option>
+                        <option value="falls">Falls</option>
+                        <option value="transport">Transport Accidents</option>
+                        <option value="assault">Assault</option>
+                        <option value="accidental_poisoning">Accidental Poisoning</option>
+                        <option value="other">Other Unintentional Causes</option>
+                    </select>
+                </div>
+
+                <!-- Filter: State / Territory -->
+                <div class="control-item">
+                    <label for="filter-state" class="control-label">State/Territory:</label>
+                    <select id="filter-state" class="select-input">
+                        <option value="all" selected>All Jurisdictions</option>
+                        <option value="NSW">New South Wales</option>
+                        <option value="VIC">Victoria</option>
+                        <option value="QLD">Queensland</option>
+                        <option value="WA">Western Australia</option>
+                        <option value="SA">South Australia</option>
+                        <option value="TAS">Tasmania</option>
+                        <option value="ACT">ACT</option>
+                        <option value="NT">Northern Territory</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="controls-group">
+                <!-- Reset Filters Button -->
+                <button type="button" id="btn-reset-filters" class="btn-action" title="Reset all filters to defaults">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                        <path d="M3 3v5h5"></path>
+                    </svg>
+                    <span>Reset Filters</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ===================================================================
+             4. VISUALISATION GRID
+             =================================================================== -->
+        <main class="visualisation-grid">
+
+            <!-- ---------------------------------------------------------------
+                 CHART 1: Annual Trend (Primary / Hero Line & Area Chart)
+                 --------------------------------------------------------------- -->
+            <article class="vis-card col-8">
+                <header class="card-header">
+                    <div class="card-title-group">
+                        <h2 class="card-title">Annual Trend of Hospitalised Injuries</h2>
+                        <p class="card-description">Tracking annual hospital admissions and bed days over the 11-year
+                            observation window.</p>
+                    </div>
+                    <div class="card-actions">
+                        <span class="badge badge-primary">Time Series</span>
+                    </div>
+                </header>
+
+                <!-- D3 Color Legend Container -->
+                <div id="legend-annual-trend" class="chart-legend">
+                    <span class="legend-item">
+                        <span class="legend-dot" style="background-color: var(--primary);"></span>
+                        <span>Hospitalisations</span>
+                    </span>
+                    <span class="legend-item">
+                        <span class="legend-dot" style="background-color: var(--secondary);"></span>
+                        <span>Bed Days (scaled)</span>
+                    </span>
+                </div>
+
+                <!-- D3 SVG Mount Target -->
+                <div id="chart-annual-trend" class="chart-container">
+                    <!-- Placeholder visible until your D3 script renders SVG here -->
+                    <div class="chart-placeholder">
+                        <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 14l4-4 4 4 5-6" />
+                        </svg>
+                        <div class="placeholder-title">Visualisation Container: Annual Trend</div>
+                        <div class="placeholder-hint">Target ID: #chart-annual-trend (Ready for D3 Line/Area Chart)
+                        </div>
+                    </div>
+                </div>
+
+                <footer class="card-footer">
+                    <strong>Key Insight:</strong> Steady upward trend in hospitalisations peaking in 2019, with bed days
+                    rising significantly between 2014 and 2016.
+                </footer>
+            </article>
+
+            <!-- ---------------------------------------------------------------
+                 CHART 2: Injury Causes Breakdown (Bar Chart or Donut Chart)
+                 --------------------------------------------------------------- -->
+            <article class="vis-card col-4">
+                <header class="card-header">
+                    <div class="card-title-group">
+                        <h2 class="card-title">Top Injury Causes</h2>
+                        <p class="card-description">Distribution across external injury mechanisms.</p>
+                    </div>
+                    <div class="card-actions">
+                        <span class="badge badge-primary">Ranking</span>
+                    </div>
+                </header>
+
+                <!-- D3 Color Legend Container -->
+                <div id="legend-causes" class="chart-legend">
+                    <span class="legend-item">
+                        <span class="legend-dot" style="background-color: #3b82f6;"></span>
+                        <span>Volume of cases</span>
+                    </span>
+                </div>
+
+                <!-- D3 SVG Mount Target -->
+                <div id="chart-causes" class="chart-container">
+                    <div class="chart-placeholder">
+                        <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 16h4M7 11h8M7 6h12" />
+                        </svg>
+                        <div class="placeholder-title">Visualisation Container: Injury Causes</div>
+                        <div class="placeholder-hint">Target ID: #chart-causes (Ready for D3 Bar/Donut Chart)</div>
+                    </div>
+                </div>
+
+                <footer class="card-footer">
+                    <strong>Note:</strong> Classified according to ICD-10 external cause codes.
+                </footer>
+            </article>
+
+            <!-- ---------------------------------------------------------------
+                 CHART 3: Demographics - Age & Sex Distribution (Grouped Bar Chart)
+                 --------------------------------------------------------------- -->
+            <article class="vis-card col-6">
+                <header class="card-header">
+                    <div class="card-title-group">
+                        <h2 class="card-title">Demographic Distribution by Age Group & Sex</h2>
+                        <p class="card-description">Comparison of injury rates and admissions across demographic age
+                            cohorts.</p>
+                    </div>
+                    <div class="card-actions">
+                        <span class="badge badge-primary">Demographics</span>
+                    </div>
+                </header>
+
+                <div id="legend-demographics" class="chart-legend">
+                    <span class="legend-item">
+                        <span class="legend-dot" style="background-color: #2563eb;"></span>
+                        <span>Male</span>
+                    </span>
+                    <span class="legend-item">
+                        <span class="legend-dot" style="background-color: #ec4899;"></span>
+                        <span>Female</span>
+                    </span>
+                </div>
+
+                <!-- D3 SVG Mount Target -->
+                <div id="chart-demographics" class="chart-container">
+                    <div class="chart-placeholder">
+                        <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <rect x="4" y="9" width="4" height="12" rx="1"></rect>
+                            <rect x="10" y="5" width="4" height="16" rx="1"></rect>
+                            <rect x="16" y="12" width="4" height="9" rx="1"></rect>
+                        </svg>
+                        <div class="placeholder-title">Visualisation Container: Demographics</div>
+                        <div class="placeholder-hint">Target ID: #chart-demographics (Ready for D3 Grouped Bar Chart)
+                        </div>
+                    </div>
+                </div>
+
+                <footer class="card-footer">
+                    <strong>Observation:</strong> Young adults and adolescents represent higher injury incidence rates.
+                </footer>
+            </article>
+
+            <!-- ---------------------------------------------------------------
+                 CHART 4: Geographic / State Distribution (Choropleth or Bar)
+                 --------------------------------------------------------------- -->
+            <article class="vis-card col-6">
+                <header class="card-header">
+                    <div class="card-title-group">
+                        <h2 class="card-title">State & Territory Breakdown</h2>
+                        <p class="card-description">Geographic comparison of hospitalisations and bed days across
+                            Australian jurisdictions.</p>
+                    </div>
+                    <div class="card-actions">
+                        <span class="badge badge-primary">Geographic</span>
+                    </div>
+                </header>
+
+                <div id="legend-geographic" class="chart-legend">
+                    <span class="legend-item">
+                        <span class="legend-dot" style="background-color: #0d9488;"></span>
+                        <span>Admissions per jurisdiction</span>
+                    </span>
+                </div>
+
+                <!-- D3 SVG Mount Target -->
+                <div id="chart-geographic" class="chart-container">
+                    <div class="chart-placeholder">
+                        <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                            <line x1="8" y1="2" x2="8" y2="18"></line>
+                            <line x1="16" y1="6" x2="16" y2="22"></line>
+                        </svg>
+                        <div class="placeholder-title">Visualisation Container: Geographic Comparison</div>
+                        <div class="placeholder-hint">Target ID: #chart-geographic (Ready for D3 Map or Bar Chart)</div>
+                    </div>
+                </div>
+
+                <footer class="card-footer">
+                    <strong>Jurisdictional context:</strong> Reflects population density and regional healthcare
+                    infrastructure.
+                </footer>
+            </article>
+
+        </main>
+
+    </div><!-- /.dashboard-wrapper -->
+
+    <!-- =======================================================================
+         5. FOOTER
+         ======================================================================= -->
+    <footer class="dashboard-footer">
+        <div class="footer-inner">
+            <div class="footer-left">
+                <p><strong>COS30045 Data Visualisation</strong> — Project Dashboard (Group DV03-T15)</p>
+                <p>Data Source: Australian Institute of Health and Welfare (AIHW) • National Hospital Morbidity Database
+                    (NHMD)</p>
+            </div>
+            <div class="footer-right">
+                <span>Created for Academic Evaluation</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- =======================================================================
+         6. SCRIPTS: D3.js and Custom Visualisation Code
+         ======================================================================= -->
+    <!-- D3.js v7 CDN -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <!-- Custom Data Loading and Chart Logic -->
+    <script src="loadData.js"></script>
+
+</body>
+
+</html>
