@@ -1,48 +1,54 @@
 /* ==========================================================================
-   COS30045 Data Visualisation - Dashboard Stylesheet
-   Modern, responsive styling for interactive D3.js data visualisations
+   COS30045 Data Visualisation - Assignment Dashboard Stylesheet
+   Data Visualisation Group 15 (DV03-T15)
+   Modern, cohesive styling featuring royal purple & pastel purple accents
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   1. CSS Custom Properties / Design Tokens
+   1. Design Tokens & CSS Variables (Purple & Pastel Purple Palette)
    -------------------------------------------------------------------------- */
 :root {
-    /* Color Palette */
-    --primary: #2563eb;
-    --primary-light: #3b82f6;
-    --primary-dark: #1d4ed8;
-    --primary-subtle: #eff6ff;
+    /* Primary Theme: Royal Purple & Pastel Purple */
+    --primary: #6d28d9;
+    /* Deep Royal Purple */
+    --primary-hover: #5b21b6;
+    --primary-light: #8b5cf6;
+    /* Medium Vibrant Purple */
+    --primary-pastel: #ede9fe;
+    /* Soft Pastel Lilac */
+    --primary-subtle: #f5f3ff;
+    /* Lavender Background */
+    --primary-border: #ddd6fe;
+    /* Pastel Purple Border */
 
-    --secondary: #0d9488;
+    /* Secondary / Contrast Accents */
+    --secondary: #0f766e;
+    /* Deep Teal (complementary) */
     --secondary-light: #14b8a6;
     --secondary-subtle: #f0fdfa;
 
-    --accent: #f59e0b;
-    --accent-light: #fef3c7;
-
+    --accent-pink: #ec4899;
+    --accent-amber: #f59e0b;
     --danger: #ef4444;
     --danger-subtle: #fef2f2;
+    --success: #10b981;
 
-    --bg-page: #f8fafc;
+    /* Surfaces & Layout */
+    --bg-page: #faf8fc;
+    /* Warm soft-tinted page canvas */
     --surface: #ffffff;
-    --surface-alt: #f1f5f9;
+    --surface-alt: #f8f6fc;
 
-    /* Typography Colors */
+    /* Typography */
     --text-primary: #0f172a;
     --text-secondary: #475569;
-    --text-muted: #94a3b8;
+    --text-muted: #64748b;
     --text-inverse: #ffffff;
 
-    /* Borders & Outlines */
-    --border-light: #f1f5f9;
+    /* Borders */
     --border: #e2e8f0;
     --border-strong: #cbd5e1;
-
-    /* Shadows */
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
-    --shadow-hover: 0 12px 20px -3px rgba(37, 99, 235, 0.12), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --border-light: #f1f5f9;
 
     /* Radii */
     --radius-sm: 6px;
@@ -50,46 +56,21 @@
     --radius-lg: 16px;
     --radius-full: 9999px;
 
-    /* Spacing & Layout */
-    --container-max-width: 1400px;
-    --header-height: 72px;
+    /* Shadows */
+    --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.07), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+    --shadow-purple: 0 4px 14px 0 rgba(109, 40, 217, 0.12);
 
-    /* Typography */
-    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    --font-mono: 'JetBrains Mono', 'Fira Code', Menlo, Consolas, monospace;
+    --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: 'JetBrains Mono', Menlo, Consolas, monospace;
 
-    /* Transitions */
-    --transition-fast: 0.15s ease;
-    --transition-base: 0.25s ease;
-}
-
-/* Dark mode support (optional toggle or prefers-color-scheme) */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --bg-page: #0b0f19;
-        --surface: #131b2e;
-        --surface-alt: #1a243b;
-
-        --text-primary: #f8fafc;
-        --text-secondary: #94a3b8;
-        --text-muted: #64748b;
-
-        --border-light: #1e293b;
-        --border: #28354d;
-        --border-strong: #3b4d6b;
-
-        --primary-subtle: rgba(37, 99, 235, 0.15);
-        --secondary-subtle: rgba(13, 148, 136, 0.15);
-        --accent-light: rgba(245, 158, 11, 0.15);
-
-        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
-        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
-        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
-    }
+    --max-content-width: 1140px;
 }
 
 /* --------------------------------------------------------------------------
-   2. Reset & Base Styles
+   2. Reset & Global Base
    -------------------------------------------------------------------------- */
 *,
 *::before,
@@ -109,513 +90,379 @@ body {
     font-family: var(--font-sans);
     background-color: var(--bg-page);
     color: var(--text-primary);
-    line-height: 1.6;
+    line-height: 1.65;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
 /* --------------------------------------------------------------------------
-   3. Main Layout Containers
+   3. Header & Navigation (Matching Course Assignment Structure)
    -------------------------------------------------------------------------- */
-.dashboard-wrapper {
-    max-width: var(--container-max-width);
-    width: 100%;
-    margin: 0 auto;
-    padding: 1.5rem 1.5rem 3rem 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.75rem;
-    flex: 1;
+header {
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--primary-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 4px rgba(109, 40, 217, 0.04);
 }
 
-/* --------------------------------------------------------------------------
-   4. Header & Top Bar
-   -------------------------------------------------------------------------- */
-.dashboard-header {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.75rem 2rem;
-    box-shadow: var(--shadow-sm);
+nav {
+    max-width: var(--max-content-width);
+    margin: 0 auto;
+    padding: 0.85rem 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 1.25rem;
 }
 
-.header-brand {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
+#logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: -0.01em;
 }
 
-.badge-wrapper {
+.logo-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    background: linear-gradient(135deg, var(--primary) 0%, #a855f7 100%);
+    color: #ffffff;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 2px 6px rgba(109, 40, 217, 0.28);
+}
+
+.logo-badge svg {
+    width: 20px;
+    height: 20px;
+}
+
+.nav-links {
+    list-style: none;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-bottom: 0.25rem;
 }
 
-.badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.2rem 0.65rem;
-    border-radius: var(--radius-full);
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-}
-
-.badge-primary {
-    background-color: var(--primary-subtle);
-    color: var(--primary);
-    border: 1px solid rgba(37, 99, 235, 0.2);
-}
-
-.badge-team {
-    background-color: var(--secondary-subtle);
-    color: var(--secondary);
-    border: 1px solid rgba(13, 148, 136, 0.2);
-}
-
-.header-brand h1 {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-}
-
-.header-subtitle {
+.nav-item {
+    text-decoration: none;
     color: var(--text-secondary);
-    font-size: 0.95rem;
-    max-width: 700px;
+    font-weight: 500;
+    font-size: 0.925rem;
+    padding: 0.45rem 0.95rem;
+    border-radius: var(--radius-full);
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
 }
 
-.header-meta {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+.nav-item:hover {
+    color: var(--primary);
+    background: var(--primary-pastel);
+    border-color: var(--primary-border);
 }
 
-.meta-item {
-    text-align: right;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-}
-
-.meta-item strong {
-    display: block;
-    color: var(--text-primary);
-    font-size: 0.95rem;
+.nav-item.active {
+    color: var(--primary-hover);
+    background: var(--primary-pastel);
+    border-color: var(--primary-border);
+    font-weight: 600;
 }
 
 /* --------------------------------------------------------------------------
-   5. Overview / Metric KPI Cards
+   4. Main Content Layout
    -------------------------------------------------------------------------- */
-.kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.25rem;
+main {
+    max-width: var(--max-content-width);
+    width: 100%;
+    margin: 0 auto;
+    padding: 2.25rem 1.5rem 3.5rem;
+    flex: 1;
 }
 
-.kpi-card {
+/* Typography Hierarchy */
+h1 {
+    font-size: clamp(1.85rem, 4vw, 2.4rem);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--text-primary);
+    line-height: 1.25;
+    margin-bottom: 0.85rem;
+}
+
+h2 {
+    font-size: clamp(1.4rem, 3vw, 1.85rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    margin: 2.5rem 0 0.85rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.4rem;
+}
+
+p {
+    color: var(--text-secondary);
+    margin-bottom: 1.15rem;
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+/* --------------------------------------------------------------------------
+   5. Hero / Intro Key Insights Box
+   -------------------------------------------------------------------------- */
+.hero-intro {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: 1.25rem 1.5rem;
+    border-radius: var(--radius-lg);
+    padding: 2rem 2.25rem;
+    margin-bottom: 2.5rem;
     box-shadow: var(--shadow-sm);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: transform var(--transition-base), box-shadow var(--transition-base);
     position: relative;
     overflow: hidden;
 }
 
-.kpi-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-.kpi-card::before {
+.hero-intro::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 3px;
-    background: var(--border);
+    height: 4px;
+    background: linear-gradient(90deg, #6d28d9 0%, #9333ea 35%, #c084fc 70%, #ede9fe 100%);
 }
 
-.kpi-card.kpi-blue::before { background: var(--primary); }
-.kpi-card.kpi-teal::before { background: var(--secondary); }
-.kpi-card.kpi-amber::before { background: var(--accent); }
-.kpi-card.kpi-red::before { background: var(--danger); }
-
-.kpi-header {
-    display: flex;
-    justify-content: space-between;
+.hero-badge {
+    display: inline-flex;
     align-items: center;
-    margin-bottom: 0.75rem;
-}
-
-.kpi-title {
-    font-size: 0.825rem;
-    font-weight: 600;
+    gap: 0.4rem;
+    padding: 0.25rem 0.85rem;
+    border-radius: var(--radius-full);
+    background: var(--primary-pastel);
+    color: var(--primary-hover);
+    border: 1px solid var(--primary-border);
+    font-size: 0.775rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.85rem;
 }
 
-.kpi-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-sm);
+.hero-intro p.lead {
+    font-size: 1.075rem;
+    color: var(--text-primary);
+    line-height: 1.65;
+    margin-bottom: 1.25rem;
+}
+
+/* Key Highlights Bullet List */
+.hero-intro ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    margin-top: 1rem;
+}
+
+.hero-intro ul li {
+    position: relative;
+    padding-left: 1.75rem;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.hero-intro ul li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1.15rem;
+    height: 1.15rem;
+    background: var(--primary-pastel);
+    color: var(--primary);
+    border: 1px solid var(--primary-border);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
-    background: var(--surface-alt);
-    color: var(--primary);
+    font-size: 0.75rem;
+    font-weight: bold;
 }
 
-.kpi-value {
-    font-size: 1.85rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    line-height: 1.1;
-    margin-bottom: 0.35rem;
-    font-family: var(--font-sans);
-    font-feature-settings: 'tnum';
-}
-
-.kpi-subtext {
-    font-size: 0.8rem;
-    color: var(--text-muted);
+/* Quick Jump Navigation Pills */
+.quick-nav {
     display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1.25rem 0 2rem;
+    padding: 0.65rem 0.85rem;
+    background: var(--surface-alt);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--primary-border);
+}
+
+.quick-nav-pill {
+    display: inline-flex;
     align-items: center;
     gap: 0.35rem;
+    padding: 0.35rem 0.85rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-size: 0.825rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
-.kpi-subtext .trend-up {
-    color: #16a34a;
-    font-weight: 600;
-}
-
-.kpi-subtext .trend-down {
-    color: #dc2626;
-    font-weight: 600;
+.quick-nav-pill:hover {
+    color: var(--primary);
+    border-color: #c084fc;
+    background: #fdfaff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(109, 40, 217, 0.12);
 }
 
 /* --------------------------------------------------------------------------
-   6. Control & Filter Panel
+   6. Chart Sections / Cards (Data Story)
    -------------------------------------------------------------------------- */
-.controls-panel {
+#charts {
+    display: flex;
+    flex-direction: column;
+    gap: 2.25rem;
+}
+
+.chart-section,
+.vis-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: 1rem 1.5rem;
+    border-radius: var(--radius-lg);
+    padding: 1.75rem 2rem;
     box-shadow: var(--shadow-sm);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 1rem;
+    transition: box-shadow 0.25s ease, border-color 0.25s ease;
+    scroll-margin-top: 5rem;
 }
 
-.controls-group {
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-    flex-wrap: wrap;
+.chart-section:hover,
+.vis-card:hover {
+    box-shadow: 0 6px 18px -2px rgba(109, 40, 217, 0.08);
+    border-color: var(--primary-border);
 }
 
-.control-item {
+.chart-header {
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.chart-tag {
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    background: var(--primary-pastel);
+    color: var(--primary-hover);
+    border: 1px solid var(--primary-border);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.03em;
+}
+
+.chart-description {
+    color: var(--text-secondary);
+    font-size: 0.925rem;
+    line-height: 1.6;
+    margin-bottom: 0;
+}
+
+/* Responsive SVG Container */
+.responsive-svg-container,
+.chart-container {
+    width: 100%;
+    min-height: 360px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.responsive-svg-container svg,
+.chart-container svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* --------------------------------------------------------------------------
+   7. Filter Controls & Toolbar
+   -------------------------------------------------------------------------- */
+.controls-panel {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+    margin: 0.75rem 0 1.25rem;
+    padding: 0.75rem 1rem;
+    background: var(--surface-alt);
+    border: 1px solid var(--primary-border);
+    border-radius: var(--radius-md);
 }
 
 .control-label {
     font-size: 0.85rem;
     font-weight: 600;
     color: var(--text-secondary);
-    white-space: nowrap;
 }
 
-/* Inputs & Select dropdowns */
 .select-input {
     background-color: var(--surface);
     border: 1px solid var(--border-strong);
     border-radius: var(--radius-sm);
-    padding: 0.45rem 1.85rem 0.45rem 0.75rem;
+    padding: 0.45rem 2rem 0.45rem 0.85rem;
     font-size: 0.875rem;
     font-family: inherit;
     color: var(--text-primary);
     cursor: pointer;
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
     outline: none;
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 0.5rem center;
+    background-position: right 0.65rem center;
     background-size: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .select-input:hover {
-    border-color: var(--primary);
+    border-color: var(--primary-light);
 }
 
 .select-input:focus {
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-}
-
-/* Button Group (Metric toggles) */
-.btn-group {
-    display: inline-flex;
-    background: var(--surface-alt);
-    padding: 3px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border);
-}
-
-.btn-toggle {
-    border: none;
-    background: transparent;
-    padding: 0.35rem 0.85rem;
-    font-size: 0.825rem;
-    font-weight: 500;
-    color: var(--text-secondary);
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-}
-
-.btn-toggle:hover {
-    color: var(--text-primary);
-}
-
-.btn-toggle.active {
-    background: var(--surface);
-    color: var(--primary);
-    font-weight: 600;
-    box-shadow: var(--shadow-sm);
-}
-
-/* Action Buttons */
-.btn-action {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.45rem 0.9rem;
-    font-size: 0.85rem;
-    font-weight: 500;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border-strong);
-    background: var(--surface);
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-}
-
-.btn-action:hover {
-    background: var(--surface-alt);
-    color: var(--text-primary);
-    border-color: var(--text-muted);
-}
-
-.btn-action.btn-primary {
-    background: var(--primary);
-    color: var(--text-inverse);
-    border-color: var(--primary);
-}
-
-.btn-action.btn-primary:hover {
-    background: var(--primary-dark);
+    box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.18);
 }
 
 /* --------------------------------------------------------------------------
-   7. Visualisation Grid & Card Containers
+   8. Specific D3 Chart Elements (Axes, Lines, Points, Bars, Labels)
    -------------------------------------------------------------------------- */
-.visualisation-grid {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: 1.5rem;
-}
-
-/* Grid Column Spans */
-.col-12 { grid-column: span 12; }
-.col-8  { grid-column: span 8; }
-.col-6  { grid-column: span 6; }
-.col-4  { grid-column: span 4; }
-
-/* Visualisation Card */
-.vis-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-sm);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    transition: box-shadow var(--transition-base);
-}
-
-.vis-card:hover {
-    box-shadow: var(--shadow-md);
-}
-
-/* Card Header */
-.card-header {
-    padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid var(--border-light);
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1rem;
-}
-
-.card-title-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-}
-
-.card-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    letter-spacing: -0.01em;
-}
-
-.card-description {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-}
-
-.card-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-/* Chart Legend Area */
-.chart-legend {
-    padding: 0.5rem 1.5rem;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    border-bottom: 1px dashed var(--border-light);
-    min-height: 28px;
-}
-
-.legend-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-}
-
-.legend-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 2px;
-}
-
-/* Chart Body / Container (Where D3 injects SVG) */
-.chart-container {
-    padding: 1.25rem 1.5rem;
-    position: relative;
-    width: 100%;
-    min-height: 380px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-}
-
-.chart-container-compact {
-    min-height: 300px;
-}
-
-/* Placeholder Empty State (Visible while building data) */
-.chart-placeholder {
-    width: 100%;
-    height: 100%;
-    border: 2px dashed var(--border);
-    border-radius: var(--radius-sm);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2.5rem 1.5rem;
-    text-align: center;
-    color: var(--text-muted);
-    background-color: rgba(248, 250, 252, 0.5);
-    transition: background-color var(--transition-fast), border-color var(--transition-fast);
-}
-
-.chart-placeholder:hover {
-    border-color: var(--primary-light);
-    background-color: var(--primary-subtle);
-}
-
-.placeholder-icon {
-    width: 48px;
-    height: 48px;
-    margin-bottom: 0.75rem;
-    opacity: 0.5;
-    color: var(--text-muted);
-}
-
-.placeholder-title {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    margin-bottom: 0.25rem;
-}
-
-.placeholder-hint {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    font-family: var(--font-mono);
-}
-
-/* Card Footer / Insights */
-.card-footer {
-    padding: 0.85rem 1.5rem;
-    background-color: var(--surface-alt);
-    border-top: 1px solid var(--border-light);
-    font-size: 0.825rem;
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.card-footer strong {
-    color: var(--text-primary);
-}
-
-/* --------------------------------------------------------------------------
-   8. D3.js Elements & SVG Specific Styling
-   -------------------------------------------------------------------------- */
-svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-    overflow: visible;
-}
-
-/* Axes */
 .axis text {
     font-family: var(--font-sans);
     font-size: 0.75rem;
@@ -625,13 +472,12 @@ svg {
 .axis line,
 .axis path {
     stroke: var(--border-strong);
-    stroke-width: 1px;
     shape-rendering: crispEdges;
 }
 
 .grid line {
     stroke: var(--border);
-    stroke-opacity: 0.7;
+    stroke-opacity: 0.8;
     shape-rendering: crispEdges;
 }
 
@@ -639,46 +485,73 @@ svg {
     stroke-width: 0;
 }
 
-/* Chart series */
-.line-series {
+.axis-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    fill: var(--text-secondary);
+}
+
+/* Question 5 Styles */
+.trend-line {
     fill: none;
-    stroke-width: 2.5px;
+    stroke: var(--primary);
+    stroke-width: 3px;
     stroke-linecap: round;
     stroke-linejoin: round;
-    transition: stroke-width var(--transition-fast);
-}
-
-.area-series {
-    fill-opacity: 0.15;
-}
-
-.bar-series rect {
-    transition: fill var(--transition-fast), opacity var(--transition-fast);
-    cursor: pointer;
-}
-
-.bar-series rect:hover {
-    opacity: 0.85;
 }
 
 .data-point {
+    fill: var(--primary);
+    stroke: #ffffff;
+    stroke-width: 2px;
     cursor: pointer;
-    transition: r 0.15s ease, fill 0.15s ease;
+    transition: transform 0.15s ease, r 0.15s ease;
 }
 
-.data-point:hover {
-    r: 6;
+.data-point:hover,
+.data-point:focus {
+    r: 7;
+    fill: var(--primary-light);
+    outline: none;
 }
 
-/* --------------------------------------------------------------------------
-   9. D3 Interactive Tooltip
-   -------------------------------------------------------------------------- */
+.endpoint-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    fill: var(--text-primary);
+}
+
+.zero-line {
+    stroke: var(--text-primary);
+    stroke-width: 1.5px;
+    stroke-dasharray: 2 2;
+}
+
+.bar {
+    fill: var(--primary);
+    transition: opacity 0.2s ease, fill 0.2s ease;
+}
+
+.bar.negative {
+    fill: var(--danger);
+}
+
+.bar:hover {
+    opacity: 0.85;
+}
+
+.value-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    fill: var(--text-primary);
+}
+
+/* D3 Tooltip */
 .d3-tooltip {
     position: absolute;
-    top: 0;
-    left: 0;
-    padding: 0.65rem 0.9rem;
+    padding: 0.5rem 0.85rem;
     font-size: 0.8rem;
+    font-family: var(--font-sans);
     background: #0f172a;
     color: #ffffff;
     border-radius: var(--radius-sm);
@@ -686,142 +559,133 @@ svg {
     box-shadow: var(--shadow-lg);
     line-height: 1.4;
     z-index: 1000;
-    transition: opacity 0.12s ease-out, transform 0.12s ease-out;
     opacity: 0;
+    transition: opacity 0.15s ease;
+    white-space: pre-line;
 }
 
 .d3-tooltip.visible {
     opacity: 0.95;
 }
 
-.tooltip-title {
-    font-weight: 700;
+/* Error message styling */
+.error-message,
+.trend-error,
+.road-chart-error {
+    background: var(--danger-subtle);
+    color: #991b1b;
+    border: 1px solid #fecaca;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
     font-size: 0.85rem;
-    margin-bottom: 0.25rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    padding-bottom: 0.2rem;
-}
-
-.tooltip-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: 0.2rem;
-}
-
-.tooltip-row .label {
-    color: #94a3b8;
-}
-
-.tooltip-row .value {
-    font-weight: 600;
-    color: #ffffff;
+    margin-top: 1rem;
 }
 
 /* --------------------------------------------------------------------------
-   10. Footer Section
+   9. Data Attribution / About Section
    -------------------------------------------------------------------------- */
-.dashboard-footer {
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    padding: 2rem 1.5rem;
-    margin-top: auto;
+.data-source-section {
+    background: linear-gradient(180deg, #ffffff 0%, var(--surface-alt) 100%);
+    border: 1px solid var(--primary-border);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem 2rem;
+    margin-top: 3rem;
+    box-shadow: var(--shadow-sm);
 }
 
-.footer-inner {
-    max-width: var(--container-max-width);
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
+.data-source-section h3 {
+    margin-bottom: 0.5rem;
+    color: var(--primary-hover);
 }
 
-.footer-left p {
-    margin-bottom: 0.25rem;
+.data-source-section p {
+    font-size: 0.925rem;
+    margin-bottom: 0.5rem;
 }
 
-.footer-left p:last-child {
-    margin-bottom: 0;
-    color: var(--text-muted);
-    font-size: 0.775rem;
-}
-
-.footer-right {
-    display: flex;
-    gap: 1.25rem;
-}
-
-.footer-right a {
+.data-source-section a {
     color: var(--primary);
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
 }
 
-.footer-right a:hover {
+.data-source-section a:hover {
     text-decoration: underline;
+    color: var(--primary-hover);
+}
+
+/* --------------------------------------------------------------------------
+   10. Footer (Purple & Pastel Purple Gradient Theme)
+   -------------------------------------------------------------------------- */
+footer {
+    background: linear-gradient(180deg, #ffffff 0%, #faf5ff 45%, #f3e8ff 100%);
+    border-top: 1px solid #e9d5ff;
+    padding: 2.25rem 1.5rem;
+    margin-top: auto;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 -2px 10px rgba(109, 40, 217, 0.03);
+}
+
+footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #6d28d9 0%, #9333ea 35%, #c084fc 70%, #ede9fe 100%);
+}
+
+.footer-content {
+    max-width: var(--max-content-width);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+footer p {
+    margin: 0;
+    color: #4b5563;
+    font-size: 0.925rem;
+}
+
+footer strong {
+    color: #581c87;
+    font-weight: 700;
+}
+
+.footer-subtext {
+    font-size: 0.8rem;
+    color: #7c3aed;
+    font-weight: 500;
 }
 
 /* --------------------------------------------------------------------------
    11. Responsive Breakpoints
    -------------------------------------------------------------------------- */
-@media (max-width: 1024px) {
-    .col-8 {
-        grid-column: span 12;
-    }
-    .col-4 {
-        grid-column: span 12;
-    }
-    .col-6 {
-        grid-column: span 12;
-    }
-}
-
 @media (max-width: 768px) {
-    .dashboard-wrapper {
-        padding: 1rem;
-        gap: 1.25rem;
+    nav {
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: flex-start;
     }
 
-    .dashboard-header {
+    .nav-links {
+        width: 100%;
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding-bottom: 0.25rem;
+    }
+
+    .hero-intro,
+    .chart-section,
+    .data-source-section {
         padding: 1.25rem;
+    }
+
+    .quick-nav {
         flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .header-meta {
-        width: 100%;
-        justify-content: space-between;
-    }
-
-    .meta-item {
-        text-align: left;
-    }
-
-    .controls-panel {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .controls-group {
-        width: 100%;
-    }
-
-    .control-item {
-        width: 100%;
-        justify-content: space-between;
-    }
-
-    .select-input {
-        flex: 1;
-    }
-
-    .chart-container {
-        min-height: 300px;
-        padding: 1rem;
     }
 }
-
