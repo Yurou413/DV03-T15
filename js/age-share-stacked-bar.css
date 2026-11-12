@@ -1,0 +1,267 @@
+.age-share-chart {
+    --age-chart-text: var(--text-primary, #0f172a);
+    --age-chart-muted: var(--text-secondary, #475569);
+    --age-chart-border: var(--border, #e2e8f0);
+    --age-chart-surface: var(--surface, #fff);
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    color: var(--age-chart-text);
+    font-family: var(--font-sans, system-ui, sans-serif);
+}
+
+.age-share-chart h3 {
+    margin: 0 0 .35rem;
+    color: var(--age-chart-text);
+    font-size: clamp(1.2rem, 3vw, 1.6rem);
+}
+
+.age-share-intro,
+.age-share-note {
+    color: var(--age-chart-muted);
+}
+
+.age-share-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem .75rem;
+    margin: .85rem 0;
+}
+
+.age-share-controls .select-input {
+    max-width: 100%;
+}
+
+.age-share-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .6rem 1.2rem;
+    margin: .75rem 0 .35rem;
+    color: var(--age-chart-text);
+    font-size: .85rem;
+}
+
+.age-share-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+}
+
+.age-share-swatch {
+    width: .9rem;
+    height: .9rem;
+    border-radius: 2px;
+}
+
+.age-share-wrap {
+    position: relative;
+    width: 100%;
+}
+
+.age-share-wrap svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.age-share-axis text {
+    fill: var(--age-chart-muted);
+    font-size: 11px;
+}
+
+.age-share-axis path,
+.age-share-axis line {
+    stroke: var(--age-chart-border);
+}
+
+.age-share-grid line {
+    stroke: var(--age-chart-border);
+    stroke-opacity: .65;
+}
+
+.age-share-grid path {
+    display: none;
+}
+
+.age-share-axis-title {
+    fill: var(--age-chart-muted);
+    font-size: 12px;
+}
+
+.age-share-status-label {
+    fill: var(--age-chart-muted);
+    font-size: 9px;
+}
+
+.age-share-segment {
+    cursor: pointer;
+    stroke: var(--age-chart-surface);
+    stroke-width: .5px;
+}
+
+.age-share-segment:hover {
+    opacity: .78;
+}
+
+.age-share-segment:focus {
+    stroke: var(--age-chart-text);
+    stroke-width: 2px;
+    outline: none;
+}
+
+.age-share-tooltip {
+    position: absolute;
+    z-index: 2;
+    display: none;
+    max-width: min(260px, calc(100% - 1rem));
+    padding: .65rem .8rem;
+    border: 1px solid var(--age-chart-border);
+    border-radius: .5rem;
+    background: var(--age-chart-surface);
+    box-shadow: 0 4px 16px rgba(15, 23, 42, .16);
+    color: var(--age-chart-text);
+    font-size: .82rem;
+    line-height: 1.45;
+    white-space: pre-line;
+    pointer-events: none;
+}
+
+.age-share-error {
+    color: #b91c1c;
+}
+
+.age-trend-chart {
+    margin-top: 1.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--age-chart-border);
+}
+
+.age-trend-intro,
+.age-trend-note {
+    color: var(--age-chart-muted);
+}
+
+.age-trend-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem .75rem;
+    margin: .85rem 0;
+}
+
+.age-trend-controls .select-input {
+    max-width: 100%;
+}
+
+.age-trend-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .6rem 1.2rem;
+    margin: .75rem 0 .35rem;
+    font-size: .85rem;
+}
+
+.age-trend-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+}
+
+.age-trend-swatch {
+    width: .9rem;
+    height: .2rem;
+    border-radius: 2px;
+}
+
+.age-trend-wrap {
+    position: relative;
+    width: 100%;
+}
+
+.age-trend-wrap svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.age-trend-axis text {
+    fill: var(--age-chart-muted);
+    font-size: 11px;
+}
+
+.age-trend-axis path,
+.age-trend-axis line {
+    stroke: var(--age-chart-border);
+}
+
+.age-trend-grid line {
+    stroke: var(--age-chart-border);
+    stroke-opacity: .65;
+}
+
+.age-trend-grid path {
+    display: none;
+}
+
+.age-trend-axis-title {
+    fill: var(--age-chart-muted);
+    font-size: 12px;
+}
+
+.age-trend-line {
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.age-trend-point-0,
+.age-trend-point-1 {
+    cursor: pointer;
+    stroke: var(--age-chart-surface);
+    stroke-width: 1.5;
+}
+
+.age-trend-point-0:focus,
+.age-trend-point-1:focus {
+    stroke: var(--age-chart-text);
+    stroke-width: 2.5;
+    outline: none;
+}
+
+.age-trend-tooltip {
+    position: absolute;
+    z-index: 2;
+    display: none;
+    max-width: min(260px, calc(100% - 1rem));
+    padding: .65rem .8rem;
+    border: 1px solid var(--age-chart-border);
+    border-radius: .5rem;
+    background: var(--age-chart-surface);
+    box-shadow: 0 4px 16px rgba(15, 23, 42, .16);
+    color: var(--age-chart-text);
+    font-size: .82rem;
+    line-height: 1.45;
+    white-space: pre-line;
+    pointer-events: none;
+}
+
+@media (max-width: 480px) {
+    .age-share-intro,
+    .age-share-note,
+    .age-trend-intro,
+    .age-trend-note {
+        font-size: .85rem;
+    }
+
+    .age-share-axis text {
+        font-size: 10px;
+    }
+
+    .age-trend-axis text {
+        font-size: 10px;
+    }
+}

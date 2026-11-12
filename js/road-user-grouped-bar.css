@@ -1,0 +1,135 @@
+.road-user-chart {
+    --road-chart-text: var(--text-primary, #0f172a);
+    --road-chart-muted: var(--text-secondary, #475569);
+    --road-chart-border: var(--border, #e2e8f0);
+    --road-chart-surface: var(--surface, #fff);
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    color: var(--road-chart-text);
+    font-family: var(--font-sans, system-ui, sans-serif);
+}
+
+.road-chart-intro,
+.road-chart-note {
+    color: var(--road-chart-muted);
+}
+
+.road-chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem 1.5rem;
+    margin: .85rem 0 .4rem;
+    font-size: .9rem;
+}
+
+.road-chart-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.road-chart-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem .75rem;
+    margin: .85rem 0 .4rem;
+}
+
+.road-chart-controls .select-input {
+    max-width: 100%;
+}
+
+.road-chart-swatch {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 3px;
+}
+
+.road-chart-wrap {
+    position: relative;
+    width: 100%;
+}
+
+.road-chart-wrap svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.road-chart-axis text {
+    fill: var(--road-chart-muted);
+    font-size: 11px;
+}
+
+.road-chart-axis path,
+.road-chart-axis line {
+    stroke: var(--road-chart-border);
+}
+
+.road-chart-grid line {
+    stroke: var(--road-chart-border);
+    stroke-opacity: .65;
+}
+
+.road-chart-grid path {
+    display: none;
+}
+
+.road-chart-axis-title {
+    fill: var(--road-chart-muted);
+    font-size: 12px;
+}
+
+.road-chart-bar {
+    cursor: pointer;
+    transition: opacity .12s ease;
+}
+
+.road-chart-bar:hover {
+    opacity: .75;
+}
+
+.road-chart-bar:focus {
+    stroke: var(--road-chart-text);
+    stroke-width: 2;
+    outline: none;
+}
+
+.road-chart-tooltip {
+    position: absolute;
+    z-index: 2;
+    display: none;
+    max-width: min(260px, calc(100% - 1rem));
+    padding: .65rem .8rem;
+    border: 1px solid var(--road-chart-border);
+    border-radius: .5rem;
+    background: var(--road-chart-surface);
+    box-shadow: 0 4px 16px rgba(15, 23, 42, .16);
+    color: var(--road-chart-text);
+    font-size: .82rem;
+    line-height: 1.45;
+    white-space: pre-line;
+    pointer-events: none;
+}
+
+.road-chart-error {
+    color: #b91c1c;
+}
+
+@media (max-width: 480px) {
+    .road-chart-intro,
+    .road-chart-note {
+        font-size: .85rem;
+    }
+
+    .road-chart-axis text {
+        font-size: 10px;
+    }
+
+    .road-chart-axis-title {
+        font-size: 11px;
+    }
+}
