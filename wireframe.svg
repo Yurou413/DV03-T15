@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1070" width="600" height="1070">
+  <defs>
+    <style>
+      .bg { fill: #ffffff; }
+      .artboard { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1; }
+      .header-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #0f172a; }
+      .nav-brand { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #1e293b; }
+      .nav-links { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 9px; fill: #64748b; }
+      .divider { stroke: #cbd5e1; stroke-width: 0.8; }
+      
+      .box-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 10.5px; font-weight: 600; fill: #334155; }
+      .wire-box { fill: #f8fafc; stroke: #64748b; stroke-width: 1; }
+      .wire-x { stroke: #94a3b8; stroke-width: 0.8; }
+      
+      .footer-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="600" height="1070" class="bg" />
+
+  <!-- Outer Artboard Frame -->
+  <rect x="30" y="30" width="540" height="1010" class="artboard" />
+
+  <!-- 1. Wireframe Header -->
+  <text x="50" y="65" class="header-title">1. Wireframe</text>
+
+  <!-- Navigation Bar -->
+  <text x="50" y="95" class="nav-brand">First Nations Injury Insights</text>
+  <text x="550" y="95" class="nav-links" text-anchor="end">Trends   |   Road Users   |   Age / Demographics   |   Jurisdiction   |   Data</text>
+  <line x1="50" y1="108" x2="550" y2="108" class="divider" />
+
+  <!-- Hero / Introduction Banner -->
+  <g transform="translate(50, 125)">
+    <rect x="0" y="0" width="500" height="85" class="wire-box" />
+    <line x1="0" y1="0" x2="500" y2="85" class="wire-x" />
+    <line x1="0" y1="85" x2="500" y2="0" class="wire-x" />
+  </g>
+
+  <!-- Box 1: Q1 National Trend -->
+  <g transform="translate(50, 250)">
+    <text x="0" y="-8" class="box-title">1. Q1: National Trend</text>
+    <rect x="0" y="0" width="500" height="85" class="wire-box" />
+    <line x1="0" y1="0" x2="500" y2="85" class="wire-x" />
+    <line x1="0" y1="85" x2="500" y2="0" class="wire-x" />
+  </g>
+
+  <!-- Box 2: Q2 Road Users -->
+  <g transform="translate(50, 375)">
+    <text x="0" y="-8" class="box-title">2. Q2: Road Users</text>
+    <rect x="0" y="0" width="500" height="85" class="wire-box" />
+    <line x1="0" y1="0" x2="500" y2="85" class="wire-x" />
+    <line x1="0" y1="85" x2="500" y2="0" class="wire-x" />
+  </g>
+
+  <!-- Box 3: Q3 Age Demographics -->
+  <g transform="translate(50, 500)">
+    <text x="0" y="-8" class="box-title">3. Q3: Age Demographics</text>
+    <rect x="0" y="0" width="500" height="85" class="wire-box" />
+    <line x1="0" y1="0" x2="500" y2="85" class="wire-x" />
+    <line x1="0" y1="85" x2="500" y2="0" class="wire-x" />
+  </g>
+
+  <!-- Box 4: Q4 Geographic Remoteness & Equity -->
+  <g transform="translate(50, 625)">
+    <text x="0" y="-8" class="box-title">4. Q4: Geographic Remoteness &amp; Equity</text>
+    <rect x="0" y="0" width="500" height="85" class="wire-box" />
+    <line x1="0" y1="0" x2="500" y2="85" class="wire-x" />
+    <line x1="0" y1="85" x2="500" y2="0" class="wire-x" />
+  </g>
+
+  <!-- Box 5: Q5 State and Territory Comparison -->
+  <g transform="translate(50, 750)">
+    <text x="0" y="-8" class="box-title">5. Q5: State and Territory Comparison</text>
+    <rect x="0" y="0" width="500" height="85" class="wire-box" />
+    <line x1="0" y1="0" x2="500" y2="85" class="wire-x" />
+    <line x1="0" y1="85" x2="500" y2="0" class="wire-x" />
+  </g>
+
+  <!-- Box 6: Data Source & Methodology -->
+  <g transform="translate(50, 875)">
+    <text x="0" y="-8" class="box-title">Data Source &amp; Methodology</text>
+    <rect x="0" y="0" width="500" height="60" class="wire-box" />
+    <line x1="0" y1="0" x2="500" y2="60" class="wire-x" />
+    <line x1="0" y1="60" x2="500" y2="0" class="wire-x" />
+  </g>
+
+  <!-- Footer -->
+  <line x1="50" y1="960" x2="550" y2="960" class="divider" />
+  <text x="300" y="980" class="footer-text">Data Visualisation Group 15  -  COS30045 Data Visualisation</text>
+</svg>
+
