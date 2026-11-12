@@ -1,4 +1,4 @@
-.age-share-chart {
+.q3-chart {
     --age-chart-text: var(--text-primary, #0f172a);
     --age-chart-muted: var(--text-secondary, #475569);
     --age-chart-border: var(--border, #e2e8f0);
@@ -10,18 +10,21 @@
     font-family: var(--font-sans, system-ui, sans-serif);
 }
 
-.age-share-chart h3 {
+.q3-chart h3 {
     margin: 0 0 .35rem;
     color: var(--age-chart-text);
     font-size: clamp(1.2rem, 3vw, 1.6rem);
 }
 
-.age-share-intro,
-.age-share-note {
+.age-butterfly-intro,
+.age-butterfly-note,
+.age-trend-intro,
+.age-trend-note {
     color: var(--age-chart-muted);
 }
 
-.age-share-controls {
+.age-butterfly-controls,
+.age-trend-controls {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -29,89 +32,86 @@
     margin: .85rem 0;
 }
 
-.age-share-controls .select-input {
+.age-butterfly-controls .select-input,
+.age-trend-controls .select-input {
     max-width: 100%;
 }
 
-.age-share-legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: .6rem 1.2rem;
-    margin: .75rem 0 .35rem;
-    color: var(--age-chart-text);
-    font-size: .85rem;
-}
-
-.age-share-legend-item {
-    display: inline-flex;
-    align-items: center;
-    gap: .4rem;
-}
-
-.age-share-swatch {
-    width: .9rem;
-    height: .9rem;
-    border-radius: 2px;
-}
-
-.age-share-wrap {
+.age-butterfly-wrap,
+.age-trend-wrap {
     position: relative;
     width: 100%;
 }
 
-.age-share-wrap svg {
+.age-butterfly-wrap svg,
+.age-trend-wrap svg {
     display: block;
     width: 100%;
     height: auto;
     overflow: visible;
 }
 
-.age-share-axis text {
-    fill: var(--age-chart-muted);
-    font-size: 11px;
+.age-butterfly-status {
+    fill: var(--age-chart-text);
+    font-size: 13px;
+    font-weight: 600;
+    text-anchor: middle;
 }
 
-.age-share-axis path,
-.age-share-axis line {
-    stroke: var(--age-chart-border);
-}
-
-.age-share-grid line {
-    stroke: var(--age-chart-border);
-    stroke-opacity: .65;
-}
-
-.age-share-grid path {
-    display: none;
-}
-
-.age-share-axis-title {
-    fill: var(--age-chart-muted);
+.age-butterfly-age {
+    fill: var(--age-chart-text);
     font-size: 12px;
+    font-weight: 600;
+    text-anchor: middle;
+    dominant-baseline: middle;
 }
 
-.age-share-status-label {
-    fill: var(--age-chart-muted);
-    font-size: 9px;
-}
-
-.age-share-segment {
+.age-butterfly-bar {
     cursor: pointer;
-    stroke: var(--age-chart-surface);
-    stroke-width: .5px;
+    transition: opacity .15s ease;
 }
 
-.age-share-segment:hover {
+.age-butterfly-bar:hover {
     opacity: .78;
 }
 
-.age-share-segment:focus {
+.age-butterfly-bar:focus {
     stroke: var(--age-chart-text);
     stroke-width: 2px;
     outline: none;
 }
 
-.age-share-tooltip {
+.age-butterfly-grid {
+    stroke: var(--age-chart-border);
+    stroke-opacity: .65;
+    stroke-dasharray: 2 3;
+}
+
+.age-butterfly-center {
+    stroke: var(--age-chart-border);
+}
+
+.age-butterfly-value,
+.age-butterfly-tick,
+.age-butterfly-axis-title {
+    fill: var(--age-chart-muted);
+    font-size: 10px;
+}
+
+.age-butterfly-value {
+    font-size: 11px;
+}
+
+.age-butterfly-tick {
+    font-size: 9px;
+}
+
+.age-butterfly-axis-title {
+    font-size: 11px;
+}
+
+.age-butterfly-tooltip,
+.age-trend-tooltip {
     position: absolute;
     z-index: 2;
     display: none;
@@ -128,7 +128,7 @@
     pointer-events: none;
 }
 
-.age-share-error {
+.q3-chart-error {
     color: #b91c1c;
 }
 
@@ -136,23 +136,6 @@
     margin-top: 1.75rem;
     padding-top: 1.5rem;
     border-top: 1px solid var(--age-chart-border);
-}
-
-.age-trend-intro,
-.age-trend-note {
-    color: var(--age-chart-muted);
-}
-
-.age-trend-controls {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: .5rem .75rem;
-    margin: .85rem 0;
-}
-
-.age-trend-controls .select-input {
-    max-width: 100%;
 }
 
 .age-trend-legend {
@@ -173,18 +156,6 @@
     width: .9rem;
     height: .2rem;
     border-radius: 2px;
-}
-
-.age-trend-wrap {
-    position: relative;
-    width: 100%;
-}
-
-.age-trend-wrap svg {
-    display: block;
-    width: 100%;
-    height: auto;
-    overflow: visible;
 }
 
 .age-trend-axis text {
@@ -250,15 +221,19 @@
 }
 
 @media (max-width: 480px) {
-    .age-share-intro,
-    .age-share-note,
+    .age-butterfly-intro,
+    .age-butterfly-note,
     .age-trend-intro,
     .age-trend-note {
         font-size: .85rem;
     }
 
-    .age-share-axis text {
-        font-size: 10px;
+    .age-butterfly-status {
+        font-size: 11px;
+    }
+
+    .age-butterfly-value {
+        font-size: 9px;
     }
 
     .age-trend-axis text {
