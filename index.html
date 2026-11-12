@@ -1,425 +1,246 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Data Visualisation Assignment – Dashboard</title>
-    <!-- Google Font: Inter (used throughout) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <!-- Main stylesheet -->
-    <link rel="stylesheet" href="style.css" />
-    <!-- D3.js v7 -->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <meta charset="UTF-8">
+    <!-- Make the page render correctly on mobile and desktop screens -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First Nations Hospitalised Injuries | Data Visualisation</title>
+
+    <!-- Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- Main page and visualisation stylesheet -->
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <div class="dashboard-wrapper">
-        <header class="dashboard-header">
-            <h1>Data Visualisation – Assignment Dashboard</h1>
-            <p>This page contains placeholders for the five required visualisations. Replace the placeholder comments with the actual D3 code for each question.</p>
-        </header>
 
-        <!-- =============================================================
-             QUESTION 1 – Multi‑line chart
-             ============================================================= -->
-        <section class="vis-card">
-            <header class="card-header">
-                <h2 class="card-title">Q1: Multi‑line Chart</h2>
-            </header>
-            <!-- Container for the chart – give it an ID and size in CSS -->
-            <div id="q1-chart" class="chart-container">
-                <!-- D3 will render the multi‑line chart here -->
-            </div>
-            <script src="js/Q1.js"></script>
+    <!-- Header navigation bar matching assignment structure -->
+    <header>
+        <nav>
+            <a href="index.html" id="logo">
+                <span class="logo-badge" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                </span>
+                <span>First Nations Injury Insights</span>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-item active">Home</a></li>
+                <li><a href="#charts" class="nav-item">Visualisations</a></li>
+                <li><a href="#about" class="nav-item">About & Data</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Introduction & Context Section -->
+        <section class="hero-intro">
+            <span class="hero-badge">COS30045 Data Visualisation • Group DV03-T15</span>
+            <h1>Hospitalised Injury Insights: First Nations Australians</h1>
+
+            <p class="lead">
+                Hospitalised injuries represent a substantial public health challenge in Australia. This project
+                presents an in-depth
+                exploratory analysis of injury admissions, disparities, and health outcomes between First Nations and
+                non-Indigenous
+                populations across an 11-year observation window (2011–2021).
+            </p>
+
+            <ul>
+                <li><strong>Longitudinal Disparities:</strong> First Nations people face disproportionately higher rates
+                    of injury hospitalisation compared to non-Indigenous Australians throughout the decade.</li>
+                <li><strong>High-Risk Mechanisms:</strong> Transport incidents, road users, and external causes reveal
+                    distinct risk profiles across demographic cohorts.</li>
+                <li><strong>Age & Regional Diversity:</strong> Vulnerability shifts significantly across age brackets
+                    and geographic remoteness, highlighting the need for targeted health interventions.</li>
+                <li><strong>Jurisdictional Differences:</strong> Variations across Australian states and territories
+                    demonstrate diverse regional healthcare dynamics and net changes over time.</li>
+            </ul>
+
+            <!-- Quick Jump Navigation Pills -->
+            <nav class="quick-nav" aria-label="Chart Jump Links">
+                <a href="#q1" class="quick-nav-pill">📈 Q1: National Trend</a>
+                <a href="#q2" class="quick-nav-pill">📊 Q2: Road Users</a>
+                <a href="#q3" class="quick-nav-pill">📉 Q3: Age Demographics</a>
+                <a href="#q4" class="quick-nav-pill">🍩 Q4: Geographic Remoteness & Equity</a>
+                <a href="#q5" class="quick-nav-pill">🗺️ Q5: State and Territory Comparison</a>
+            </nav>
         </section>
 
-        <!-- =============================================================
-             QUESTION 2 – Grouped Bar Chart
-             ============================================================= -->
-        <section class="vis-card">
-            <header class="card-header">
-                <h2 class="card-title">Q2: Grouped Bar Chart</h2>
-            </header>
-            <div id="q2-chart" class="chart-container">
-                <!-- D3 will render the grouped bar chart here -->
-            </div>
-            <script src="js/Q2.js"></script>
+        <!-- Data Story & Visualisations Section -->
+        <section id="charts">
+            <h2>First Nations Hospitalised Injury Insights: Data Story</h2>
+            <p>
+                The following interactive D3 visualisations explore Australian hospitalised injury data from the
+                Australian Institute of Health and Welfare (AIHW), addressing five core investigative questions.
+            </p>
+
+            <!-- =========================================================
+                 QUESTION 1: Multi-Line Chart
+                 ========================================================= -->
+            <article class="chart-section" id="q1">
+                <div class="chart-header">
+                    <span class="chart-tag">Multi-Line Chart</span>
+                    <h3>Q1 National Trend</h3>
+                    <p class="chart-description">
+                        How did national non-fatal hospitalised road traffic injury counts change from 2011 to 2021, and
+                        how did the pattern observe during the peak pandemic years (2019–2021) compared to the pre-2019
+                        baseline?
+                    </p>
+                </div>
+
+                <!-- D3 Render Target for Q1 (Q1.js injects here) -->
+                <div id="q1-chart" class="responsive-svg-container chart-container"></div>
+            </article>
+
+            <!-- =========================================================
+                 QUESTION 2: Grouped Bar Chart
+                 ========================================================= -->
+            <article class="chart-section" id="q2">
+                <div class="chart-header">
+                    <span class="chart-tag">Grouped Bar Chart</span>
+                    <h3>Q2 Road Users</h3>
+                    <p class="chart-description">
+                        Which Road user groups (car drivers, motorcyclists, pedal cyclists, pedestrians, etc.)
+                        contributed most to the change in hospitalised injury counts between 2011 and 2021, and how did
+                        these patterns differ between First Nations peoples and Non-Indigenous Australians?
+                    </p>
+                </div>
+
+                <!-- D3 Render Target for Q2 (Q2.js injects here) -->
+                <div id="q2-chart" class="responsive-svg-container chart-container"></div>
+            </article>
+
+            <!-- =========================================================
+                 QUESTION 3: Stacked Bar Chart
+                 ========================================================= -->
+            <article class="chart-section" id="q3">
+                <div class="chart-header">
+                    <span class="chart-tag">Stacked Bar Chart</span>
+                    <h3>Q3 Age Demographics</h3>
+                    <p class="chart-description">
+                        How did hospitalised road traffic injury counts vary across age groups between 2011 and 2021,
+                        and which age groups contributed most to the injury burden among First Nations peoples compared
+                        with Non-Indigenous Australians?
+                    </p>
+                </div>
+
+                <!-- D3 Render Target for Q3 (Q3.js injects here) -->
+                <div id="q3-chart" class="responsive-svg-container chart-container"></div>
+            </article>
+
+            <!-- =========================================================
+                 QUESTION 4: Pie/Donut Chart with Year Filter
+                 ========================================================= -->
+            <article class="chart-section" id="q4">
+                <div class="chart-header">
+                    <span class="chart-tag">Pie/Donut Chart with Year Filter</span>
+                    <h3>Q4 Geographic Remoteness & Equity</h3>
+                    <p class="chart-description">
+                        How did hospitalised road traffic injury counts vary across Major Cities, Regional, and Remote
+                        areas between 2011 and 2021, and how did these patterns differ between First Nations peoples and
+                        Non-Indigenous Australians?
+                    </p>
+                </div>
+
+                <!-- Interactive Year Filter for Q4 (Populated by Q4.js) -->
+                <div class="controls-panel">
+                    <label for="q4-year" class="control-label">Select Reporting Year:</label>
+                    <select id="q4-year" class="select-input"></select>
+                </div>
+
+                <!-- D3 Render Target for Q4 (Q4.js injects here) -->
+                <div id="q4-chart" class="responsive-svg-container chart-container"></div>
+            </article>
+
+            <!-- =========================================================
+                 QUESTION 5: Line Chart and Horizontal Bar Chart
+                 ========================================================= -->
+            <article class="chart-section" id="q5">
+                <div class="chart-header">
+                    <span class="chart-tag">Line Chart & Horizontal Bar Chart</span>
+                    <h3>Q5 State and Territory Comparison</h3>
+                    <p class="chart-description">
+                        How did non-fatal hospitalised road traffic injury counts vary across Australian states and
+                        territories from 2011 to 2021, and which states or territories experienced the largest increases
+                        or decreases over this period?
+                    </p>
+                </div>
+
+                <!-- Interactive Controls for Q5 -->
+                <div class="controls-panel">
+                    <label for="jurisdiction-select" class="control-label">Choose Jurisdiction:</label>
+                    <select id="jurisdiction-select" class="select-input"></select>
+                </div>
+
+                <!-- Chart 5A: Annual Trend Line Chart -->
+                <div id="trend-chart" class="responsive-svg-container chart-container"></div>
+
+                <!-- Chart 5B: Absolute Change Horizontal Bar Chart -->
+                <div id="change-chart" class="responsive-svg-container chart-container" style="margin-top: 2rem;"></div>
+
+                <!-- Q5 Interactive Hover Tooltip -->
+                <div id="trend-tooltip" class="d3-tooltip" role="tooltip" aria-hidden="true"></div>
+
+                <!-- Error Message Container (Shown if CSV fails to load) -->
+                <p id="load-error" class="error-message" hidden></p>
+            </article>
         </section>
 
-        <!-- =============================================================
-             QUESTION 3 – Stacked Bar Chart
-             ============================================================= -->
-        <section class="vis-card">
-            <header class="card-header">
-                <h2 class="card-title">Q3: Stacked Bar Chart</h2>
-            </header>
-            <div id="q3-chart" class="chart-container">
-                <!-- D3 will render the stacked bar chart here -->
-            </div>
-            <script src="js/Q3.js"></script>
+        <!-- Data Source & Attribution Section (matches previous assignment style) -->
+        <section id="about" class="data-source-section">
+            <h3>Data Source & Attribution</h3>
+            <p>
+                Data sourced from the
+                <a href="https://www.aihw.gov.au/" target="_blank" rel="noopener noreferrer">
+                    Australian Institute of Health and Welfare (AIHW)
+                </a> — <em>First Nations hospitalised injuries (2023)</em> and <em>State and territory hospitalisation
+                    injury publication (2023)</em>,
+                derived from the National Hospital Morbidity Database (NHMD).
+            </p>
+            <p>
+                Reporting Period: 2011–12 to 2020–21. Prepared for COS30045 Data Visualisation Semester 1, 2026.
+            </p>
         </section>
+    </main>
 
-        <!-- =============================================================
-             QUESTION 4 – Pie / Donut Chart with Year Filter
-             ============================================================= -->
-        <section class="vis-card">
-            <header class="card-header">
-                <h2 class="card-title">Q4: Pie/Donut Chart (Year Filter)</h2>
-            </header>
-            <div class="controls-panel" style="margin-bottom: 1rem;">
-                <label for="q4-year" class="control-label">Year:</label>
-                <select id="q4-year" class="select-input">
-                    <!-- Populate options with available years (e.g., 2011‑2021) -->
-                </select>
-            </div>
-            <div id="q4-chart" class="chart-container">
-                <!-- D3 will render the pie / donut chart here -->
-            </div>
-            <script src="js/Q4.js"></script>
-        </section>
+    <!-- Page Footer matching group assignment structure -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; <span id="year"></span> <strong>Data Visualisation Tutorial 3 Group 15</strong>. COS30045 Data
+                Visualisation.</p>
+            <p class="footer-subtext">Built with D3.js v7 for Academic Evaluation</p>
+        </div>
+    </footer>
 
-        <!-- =============================================================
-             QUESTION 5 – Line Chart + Horizontal Bar Chart (provided below)
-             ============================================================= -->
-        <section class="vis-card">
-            <header class="card-header">
-                <h2 class="card-title">Q5: Line Chart & Horizontal Bar Chart</h2>
-            </header>
-            <div style="margin-bottom: 1rem;">
-                <label for="jurisdiction-select" class="control-label">Jurisdiction:</label>
-                <select id="jurisdiction-select" class="select-input"></select>
-            </div>
-            <!-- Trend (line) chart container -->
-            <div id="trend-chart" class="chart-container"></div>
-            <!-- Change (horizontal bar) chart container -->
-            <div id="change-chart" class="chart-container" style="margin-top: 2rem;"></div>
-            <!-- Tooltip that will be updated by the script -->
-            <div id="trend-tooltip" class="d3-tooltip" role="tooltip" aria-hidden="true"></div>
-            <!-- Error message area (shown when data fails to load) -->
-            <p id="load-error" class="error-message" hidden style="color: var(--danger); margin-top: 1rem;"></p>
-            <!-- Insert the provided Q5 D3 script below -->
-            <script>
-                // -------------------- Q5 D3 script (provided by user) --------------------
-                (() => {
-                  const annualPath = "Final%20Data/State%20and%20Territory%20Hospitalisation%20Injury%20Publication/state_territory_annual_injuries.csv";
-                  const changePath = "Final%20Data/State%20and%20Territory%20Hospitalisation%20Injury%20Publication/state_territory_change_2011_2021.csv";
+    <!-- D3.js v7 Core Library -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
 
-                  const nameMap = {
-                    ACT: "Australian Capital Territory",
-                    NSW: "New South Wales",
-                    NT: "Northern Territory",
-                    Qld: "Queensland",
-                    SA: "South Australia",
-                    Tas: "Tasmania",
-                    Vic: "Victoria",
-                    WA: "Western Australia"
-                  };
+    <!-- Question Visualisation Scripts -->
+    <script src="js/Q1.js"></script>
+    <script src="js/Q2.js"></script>
+    <script src="js/Q3.js"></script>
+    <script src="js/Q4.js"></script>
+    <script src="js/Q5.js"></script>
 
-                  const numberFormat = d3.format(",.0f");
-
-                  Promise.all([
-                    d3.csv(annualPath),
-                    d3.csv(changePath)
-                  ])
-                    .then(([annualRows, changeRows]) => {
-                      const annual = annualRows.map(d => ({
-                        year: +d.Year,
-                        code: d.State,
-                        jurisdiction: nameMap[d.State] || d.State,
-                        count: +d["Sum(Injury_Count)"]
-                      }));
-
-                      const changes = changeRows.map(d => ({
-                        code: d.State,
-                        jurisdiction: nameMap[d.State] || d.State,
-                        change: +d.Change
-                      }));
-
-                      if (
-                        !annual.length ||
-                        annual.some(d => !Number.isFinite(d.count)) ||
-                        changes.some(d => !Number.isFinite(d.change))
-                      ) {
-                        throw new Error("The CSV data could not be read as numeric counts.");
-                      }
-
-                      drawTrend(annual);
-                      drawChanges(changes);
-
-                      document
-                        .getElementById("jurisdiction-select")
-                        .addEventListener("change", () => drawTrend(annual));
-                    })
-                    .catch(error => {
-                      const message = document.getElementById("load-error");
-                      message.hidden = false;
-                      message.textContent =
-                        "The chart data could not be loaded. Check that both CSV files are in the Final Data folder. " +
-                        error.message;
-                    });
-
-                  function drawTrend(allRows) {
-                    const select = document.getElementById("jurisdiction-select");
-                    const names = [...new Set(allRows.map(d => d.jurisdiction))]
-                      .sort((a, b) => a.localeCompare(b));
-
-                    const current = select.value || "Queensland";
-                    select.innerHTML = "";
-
-                    names.forEach(name => {
-                      select.add(new Option(name, name));
-                    });
-
-                    select.value = names.includes(current) ? current : names[0];
-
-                    const rows = allRows
-                      .filter(d => d.jurisdiction === select.value)
-                      .sort((a, b) => a.year - b.year);
-
-                    const width = 940;
-                    const height = 390;
-                    const margin = { top: 24, right: 90, bottom: 58, left: 76 };
-
-                    const svg = d3
-                      .select("#trend-chart")
-                      .html("")
-                      .append("svg")
-                      .attr("viewBox", `0 0 ${width} ${height}`)
-                      .attr("role", "img")
-                      .attr(
-                        "aria-label",
-                        `Annual hospitalised injury counts in ${select.value}, 2011 to 2021`
-                      );
-
-                    svg.append("title").text(`Annual hospitalised injury counts in ${select.value}, 2011–2021`);
-
-                    const x = d3
-                      .scaleLinear()
-                      .domain([2011, 2021])
-                      .range([margin.left, width - margin.right]);
-
-                    const y = d3
-                      .scaleLinear()
-                      .domain([0, 12000])
-                      .nice()
-                      .range([height - margin.bottom, margin.top]);
-
-                    // Grid lines
-                    svg
-                      .append("g")
-                      .attr("class", "grid")
-                      .attr("transform", `translate(${margin.left},0)`)
-                      .call(
-                        d3
-                          .axisLeft(y)
-                          .ticks(5)
-                          .tickSize(-(width - margin.left - margin.right))
-                          .tickFormat("")
-                      );
-
-                    // X axis
-                    svg
-                      .append("g")
-                      .attr("class", "axis")
-                      .attr("transform", `translate(0,${height - margin.bottom})`)
-                      .call(
-                        d3
-                          .axisBottom(x)
-                          .tickFormat(d3.format("d"))
-                          .ticks(6)
-                          .tickSizeOuter(0)
-                      );
-
-                    // Y axis
-                    svg
-                      .append("g")
-                      .attr("class", "axis")
-                      .attr("transform", `translate(${margin.left},0)`)
-                      .call(
-                        d3
-                          .axisLeft(y)
-                          .ticks(5)
-                          .tickFormat(numberFormat)
-                          .tickSizeOuter(0)
-                      );
-
-                    // Axis labels
-                    svg
-                      .append("text")
-                      .attr("class", "axis-label")
-                      .attr("transform", "rotate(-90)")
-                      .attr(
-                        "x",
-                        -(margin.top + (height - margin.bottom - margin.top) / 2)
-                      )
-                      .attr("y", 20)
-                      .attr("text-anchor", "middle")
-                      .text("Hospitalised injury cases");
-
-                    svg
-                      .append("text")
-                      .attr("class", "axis-label")
-                      .attr("x", (margin.left + width - margin.right) / 2)
-                      .attr("y", height - 12)
-                      .attr("text-anchor", "middle")
-                      .text("Calendar year");
-
-                    const line = d3
-                      .line()
-                      .x(d => x(d.year))
-                      .y(d => y(d.count));
-
-                    svg
-                      .append("path")
-                      .datum(rows)
-                      .attr("class", "trend-line")
-                      .attr("d", line);
-
-                    const tooltip = document.getElementById("trend-tooltip");
-
-                    svg
-                      .selectAll(".data-point")
-                      .data(rows)
-                      .join("circle")
-                      .attr("class", "data-point")
-                      .attr("cx", d => x(d.year))
-                      .attr("cy", d => y(d.count))
-                      .attr("r", 5)
-                      .attr("tabindex", 0)
-                      .on("mouseenter focus", (event, d) => {
-                        tooltip.textContent = `${d.jurisdiction} · ${d.year}: ${numberFormat(d.count)} hospitalised injuries`;
-                      })
-                      .on("mouseleave blur", () => {
-                        tooltip.textContent = "";
-                      });
-
-                    [rows[0], rows[rows.length - 1]].forEach((d, i) => {
-                      svg
-                        .append("text")
-                        .attr("class", "endpoint-label")
-                        .attr("x", x(d.year) + (i ? 9 : -9))
-                        .attr("y", y(d.count) - 10)
-                        .attr("text-anchor", i ? "start" : "end")
-                        .text(numberFormat(d.count));
-                    });
-                  }
-
-                  function drawChanges(rows) {
-                    rows.sort((a, b) => b.change - a.change);
-
-                    const width = 940;
-                    const rowHeight = 42;
-                    const height = 48 + rows.length * rowHeight + 44;
-                    const margin = { top: 20, right: 92, bottom: 58, left: 240 };
-
-                    const x = d3
-                      .scaleLinear()
-                      .domain([-2000, 4500])
-                      .range([margin.left, width - margin.right]);
-
-                    const y = d3
-                      .scaleBand()
-                      .domain(rows.map(d => d.jurisdiction))
-                      .range([margin.top, height - margin.bottom])
-                      .padding(0.25);
-
-                    const svg = d3
-                      .select("#change-chart")
-                      .html("")
-                      .append("svg")
-                      .attr("viewBox", `0 0 ${width} ${height}`)
-                      .attr("role", "img")
-                      .attr(
-                        "aria-label",
-                        "Absolute change in hospitalised injury counts by state and territory, 2011 to 2021"
-                      );
-
-                    svg.append("title").text("Change in hospitalised injury counts, 2021 minus 2011");
-
-                    // X grid
-                    svg
-                      .append("g")
-                      .attr("class", "grid")
-                      .attr("transform", `translate(0,${height - margin.bottom})`)
-                      .call(
-                        d3
-                          .axisBottom(x)
-                          .tickValues([-2000, 0, 2000, 4000])
-                          .tickSize(-(height - margin.top - margin.bottom))
-                          .tickFormat("")
-                      );
-
-                    // X axis
-                    svg
-                      .append("g")
-                      .attr("class", "axis")
-                      .attr("transform", `translate(0,${height - margin.bottom})`)
-                      .call(
-                        d3
-                          .axisBottom(x)
-                          .tickValues([-2000, 0, 2000, 4000])
-                          .tickFormat(d3.format(",d"))
-                          .tickSizeOuter(0)
-                      );
-
-                    // Y axis (jurisdictions)
-                    svg
-                      .append("g")
-                      .attr("class", "axis")
-                      .attr("transform", `translate(${x(0)},0)`)
-                      .call(d3.axisLeft(y).tickSize(0))
-                      .call(g => g.select(".domain").remove());
-
-                    // Zero line
-                    svg
-                      .append("line")
-                      .attr("class", "zero-line")
-                      .attr("x1", x(0))
-                      .attr("x2", x(0))
-                      .attr("y1", margin.top)
-                      .attr("y2", height - margin.bottom);
-
-                    // Bars
-                    svg
-                      .selectAll(".bar")
-                      .data(rows)
-                      .join("rect")
-                      .attr("class", d => (d.change < 0 ? "bar negative" : "bar"))
-                      .attr("x", d => x(Math.min(0, d.change)))
-                      .attr("y", d => y(d.jurisdiction))
-                      .attr("width", d => Math.abs(x(d.change) - x(0)))
-                      .attr("height", y.bandwidth())
-                      .attr("rx", 4);
-
-                    // Value labels on bars
-                    svg
-                      .selectAll(".value-label")
-                      .data(rows)
-                      .join("text")
-                      .attr("class", "value-label")
-                      .attr("x", d => x(d.change) + (d.change < 0 ? -8 : 8))
-                      .attr("y", d => y(d.jurisdiction) + y.bandwidth() / 2 + 4)
-                      .attr("text-anchor", d => (d.change < 0 ? "end" : "start"))
-                      .text(d => (d.change > 0 ? "+" : "−") + numberFormat(Math.abs(d.change)));
-
-                    // X‑axis label
-                    svg
-                      .append("text")
-                      .attr("class", "axis-label")
-                      .attr("x", (margin.left + width - margin.right) / 2)
-                      .attr("y", height - 8)
-                      .attr("text-anchor", "middle")
-                      .text("Change in cases (2021 minus 2011)");
-                  }
-                })();
-                // -------------------------------------------------------------------
-            </script>
-        </section>
-
-        <footer class="dashboard-footer">
-            <p>Data source: Australian Institute of Health and Welfare (AIHW). Replace placeholders with your D3 implementations.</p>
-        </footer>
-    </div>
+    <!-- Small script to dynamically update copyright year -->
+    <script>
+        const yearElem = document.getElementById("year");
+        if (yearElem) {
+            yearElem.textContent = new Date().getFullYear();
+        }
+    </script>
 </body>
+
 </html>
