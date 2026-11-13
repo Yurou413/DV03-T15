@@ -18,13 +18,12 @@
 
 .age-butterfly-intro,
 .age-butterfly-note,
-.age-trend-intro,
-.age-trend-note {
+.age-heatmap-intro,
+.age-heatmap-note {
     color: var(--age-chart-muted);
 }
 
-.age-butterfly-controls,
-.age-trend-controls {
+.age-butterfly-controls {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -32,19 +31,18 @@
     margin: .85rem 0;
 }
 
-.age-butterfly-controls .select-input,
-.age-trend-controls .select-input {
+.age-butterfly-controls .select-input {
     max-width: 100%;
 }
 
 .age-butterfly-wrap,
-.age-trend-wrap {
+.age-heatmap-wrap {
     position: relative;
     width: 100%;
 }
 
 .age-butterfly-wrap svg,
-.age-trend-wrap svg {
+.age-heatmap-wrap svg {
     display: block;
     width: 100%;
     height: auto;
@@ -111,7 +109,7 @@
 }
 
 .age-butterfly-tooltip,
-.age-trend-tooltip {
+.age-heatmap-tooltip {
     position: absolute;
     z-index: 2;
     display: none;
@@ -132,99 +130,78 @@
     color: #b91c1c;
 }
 
-.age-trend-chart {
+.age-heatmap-chart {
     margin-top: 1.75rem;
     padding-top: 1.5rem;
     border-top: 1px solid var(--age-chart-border);
 }
 
-.age-trend-legend {
+.age-heatmap-legend {
     display: flex;
-    flex-wrap: wrap;
-    gap: .6rem 1.2rem;
+    align-items: center;
+    justify-content: center;
+    gap: .65rem;
     margin: .75rem 0 .35rem;
     font-size: .85rem;
 }
 
-.age-trend-legend-item {
-    display: inline-flex;
-    align-items: center;
-    gap: .4rem;
+.age-heatmap-gradient {
+    width: min(16rem, 60%);
+    height: .8rem;
+    border: 1px solid var(--age-chart-border);
+    border-radius: 999px;
+    background: linear-gradient(
+        90deg,
+        #ffffb2 0 14.28%,
+        #fed976 14.28% 28.56%,
+        #feb24c 28.56% 42.84%,
+        #fd8d3c 42.84% 57.12%,
+        #fc4e2a 57.12% 71.4%,
+        #e31a1c 71.4% 85.68%,
+        #b10026 85.68% 100%
+    );
 }
 
-.age-trend-swatch {
-    width: .9rem;
-    height: .2rem;
-    border-radius: 2px;
+.age-heatmap-status {
+    fill: var(--age-chart-text);
+    font-size: 13px;
+    font-weight: 600;
+    text-anchor: middle;
 }
 
-.age-trend-axis text {
+.age-heatmap-axis text {
+    fill: var(--age-chart-muted);
+    font-size: 10px;
+}
+
+.age-heatmap-axis path,
+.age-heatmap-axis line {
+    stroke: var(--age-chart-border);
+}
+
+.age-heatmap-axis-title {
     fill: var(--age-chart-muted);
     font-size: 11px;
 }
 
-.age-trend-axis path,
-.age-trend-axis line {
-    stroke: var(--age-chart-border);
-}
-
-.age-trend-grid line {
-    stroke: var(--age-chart-border);
-    stroke-opacity: .65;
-}
-
-.age-trend-grid path {
-    display: none;
-}
-
-.age-trend-axis-title {
-    fill: var(--age-chart-muted);
-    font-size: 12px;
-}
-
-.age-trend-line {
-    fill: none;
-    stroke-width: 2.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
-.age-trend-point-0,
-.age-trend-point-1 {
-    cursor: pointer;
+.age-heatmap-cell {
     stroke: var(--age-chart-surface);
-    stroke-width: 1.5;
+    stroke-width: 1.5px;
+    cursor: pointer;
 }
 
-.age-trend-point-0:focus,
-.age-trend-point-1:focus {
+.age-heatmap-cell:hover,
+.age-heatmap-cell:focus {
     stroke: var(--age-chart-text);
-    stroke-width: 2.5;
+    stroke-width: 2px;
     outline: none;
-}
-
-.age-trend-tooltip {
-    position: absolute;
-    z-index: 2;
-    display: none;
-    max-width: min(260px, calc(100% - 1rem));
-    padding: .65rem .8rem;
-    border: 1px solid var(--age-chart-border);
-    border-radius: .5rem;
-    background: var(--age-chart-surface);
-    box-shadow: 0 4px 16px rgba(15, 23, 42, .16);
-    color: var(--age-chart-text);
-    font-size: .82rem;
-    line-height: 1.45;
-    white-space: pre-line;
-    pointer-events: none;
 }
 
 @media (max-width: 480px) {
     .age-butterfly-intro,
     .age-butterfly-note,
-    .age-trend-intro,
-    .age-trend-note {
+    .age-heatmap-intro,
+    .age-heatmap-note {
         font-size: .85rem;
     }
 
@@ -236,7 +213,7 @@
         font-size: 9px;
     }
 
-    .age-trend-axis text {
-        font-size: 10px;
+    .age-heatmap-axis text {
+        font-size: 9px;
     }
 }

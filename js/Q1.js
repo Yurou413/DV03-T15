@@ -51,65 +51,132 @@
                     while non-Indigenous hospitalisations ${nonIndigenousAnnualChange === null ? "change unavailable" : `${nonIndigenousAnnualChange < 0 ? "fell" : "rose"} ${magnitude(Math.abs(nonIndigenousAnnualChange))}%`}.
                     From 2011 to ${rows[rows.length - 1].year}, counts ${firstNationChange < 0 ? "fell" : "rose"} ${magnitude(Math.abs(firstNationChange))}% for First Nations people and ${nonIndigenousChange < 0 ? "fell" : "rose"} ${magnitude(Math.abs(nonIndigenousChange))}% for non-Indigenous people.
                 </p>
+                <div class="trend-controls">
+                    <label for="q1-view" class="control-label">Chart view:</label>
+                    <select id="q1-view" class="select-input trend-view-select">
+                        <option value="combined">Combined</option>
+                        <option value="difference">Difference</option>
+                        <option value="overview">Overview</option>
+                    </select>
+                </div>
                 <div class="trend-legend" aria-label="Chart legend"></div>
                 <div class="trend-chart-wrap">
                     <div class="trend-tooltip" role="status" aria-live="polite"></div>
-                    <svg role="group" aria-label="Line chart comparing changes in injury hospitalisations by Indigenous status"></svg>
+                    <svg role="group" aria-label="Combined bar and line chart of injury hospitalisations by year"></svg>
                 </div>
-                <p class="trend-note">Hover over or focus a data point to see the annual count and change. Indexed percentages compare each year with 2011.</p>
+                <p class="trend-note">Bars show total hospitalisations (First Nations plus non-Indigenous); lines show each group’s percentage change from 2011. Hover over or focus a mark for details.</p>
             </div>`;
 
         const chart = container.querySelector(".indigenous-trend-chart");
         const legend = chart.querySelector(".trend-legend");
+        const viewSelect = chart.querySelector("#q1-view");
         series.forEach(item => {
             const entry = document.createElement("span");
-            entry.className = "trend-legend-item";
+            entry.className = "trend-legend-item trend-legend-line";
             entry.innerHTML = `<span class="trend-swatch" style="background:${item.color}"></span><span>${item.name}</span>`;
             legend.appendChild(entry);
         });
+        const totalEntry = document.createElement("span");
+        totalEntry.className = "trend-legend-item trend-legend-total";
+        totalEntry.innerHTML = '<span class="trend-swatch trend-bar-swatch"></span><span>Total hospitalisations</span>';
+        legend.appendChild(totalEntry);
 
         const chartWrap = chart.querySelector(".trend-chart-wrap");
         const tooltip = chart.querySelector(".trend-tooltip");
         const svg = d3.select(chart.querySelector("svg"));
+        let view = "combined";
         let resizeObserver;
 
         function draw() {
             const width = Math.floor(chartWrap.getBoundingClientRect().width);
             if (!width) return;
 
+            const showLines = view !== "overview";
+            const showBars = view !== "difference";
             const height = width < 480 ? 340 : 410;
-            const margin = { top: 20, right: 18, bottom: 52, left: width < 380 ? 48 : 58 };
+            const margin = {
+                top: 20,
+                right: view === "combined" ? (width < 380 ? 62 : 76) : 18,
+                bottom: 52,
+                left: width < 380 ? 48 : 58
+            };
             const innerWidth = width - margin.left - margin.right;
             const innerHeight = height - margin.top - margin.bottom;
+            const x = d3.scaleLinear()
+                .domain([rows[0].year - 0.6, rows[rows.length - 1].year + 0.6])
+                .range([0, innerWidth]);
             const minValue = d3.min(rows, row => d3.min(series, item => row[`${item.key}Change`]));
             const maxValue = d3.max(rows, row => d3.max(series, item => row[`${item.key}Change`]));
             const yDomain = [Math.min(-10, Math.floor(minValue / 10) * 10), Math.ceil(maxValue / 10) * 10];
-            const x = d3.scaleLinear()
-                .domain(d3.extent(rows, row => row.year))
-                .range([0, innerWidth]);
-            const y = d3.scaleLinear()
-                .domain(yDomain)
+            const y = showLines
+                ? d3.scaleLinear().domain(yDomain).nice().range([innerHeight, 0])
+                : null;
+            const countY = d3.scaleLinear()
+                .domain([0, d3.max(rows, row => row.total) * 1.12])
                 .nice()
                 .range([innerHeight, 0]);
             const tickYears = width < 480
                 ? rows.filter((row, index) => index % 2 === 0 || index === rows.length - 1).map(row => row.year)
                 : rows.map(row => row.year);
+            const barWidth = Math.min(26, innerWidth / (rows.length + 0.2) * 0.4);
 
             svg.selectAll("*").remove();
             svg.attr("viewBox", `0 0 ${width} ${height}`).attr("height", height);
-            svg.append("desc").text("Two lines show percentage change from 2011 to 2021. Hover or focus points for exact counts and annual changes.");
+            svg.attr("aria-label", view === "overview"
+                ? "Bar chart of total injury hospitalisations by year"
+                : view === "difference"
+                    ? "Line chart comparing percentage changes in injury hospitalisations by Indigenous status"
+                    : "Combined bar and line chart of injury hospitalisations by year");
+            svg.append("desc").text("Bars show the sum of First Nations and non-Indigenous hospitalisations. Lines show percentage change from 2011.");
 
             const plot = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
-            plot.append("g")
-                .attr("class", "trend-grid")
-                .call(d3.axisLeft(y).ticks(6).tickSize(-innerWidth).tickFormat(""));
+            if (showLines) {
+                plot.append("g")
+                    .attr("class", "trend-grid")
+                    .call(d3.axisLeft(y).ticks(6).tickSize(-innerWidth).tickFormat(""));
+            } else {
+                plot.append("g")
+                    .attr("class", "trend-grid")
+                    .call(d3.axisLeft(countY).ticks(6).tickSize(-innerWidth).tickFormat(""));
+            }
+            if (showBars) {
+                plot.selectAll(".trend-total-bar")
+                    .data(rows)
+                    .join("rect")
+                    .attr("class", "trend-total-bar")
+                    .attr("x", row => x(row.year) - barWidth / 2)
+                    .attr("y", row => countY(row.total))
+                    .attr("width", barWidth)
+                    .attr("height", row => innerHeight - countY(row.total))
+                    .attr("fill", view === "overview" ? "#60a5fa" : "#2563eb")
+                    .attr("opacity", view === "overview" ? 0.78 : 0.4)
+                    .attr("tabindex", 0)
+                    .attr("role", "img")
+                    .attr("aria-label", row => `${row.year}: ${number(row.total)} total hospitalisations, ${number(row.firstNations)} First Nations people plus ${number(row.nonIndigenous)} non-Indigenous`)
+                    .on("pointerenter pointermove", function (event, row) {
+                        showBarTooltip(event, row, this);
+                    })
+                    .on("pointerleave", hideTooltip)
+                    .on("focus", function (event, row) {
+                        showBarTooltip(null, row, this);
+                    })
+                    .on("blur", hideTooltip);
+            }
             plot.append("g")
                 .attr("class", "trend-axis")
                 .attr("transform", `translate(0,${innerHeight})`)
                 .call(d3.axisBottom(x).tickValues(tickYears).tickFormat(d3.format("d")).tickSizeOuter(0));
             plot.append("g")
                 .attr("class", "trend-axis")
-                .call(d3.axisLeft(y).ticks(6).tickFormat(value => `${value}%`).tickSizeOuter(0));
+                .call(showLines
+                    ? d3.axisLeft(y).ticks(6).tickFormat(value => `${value}%`).tickSizeOuter(0)
+                    : d3.axisLeft(countY).ticks(6).tickFormat(d3.format(".0s")).tickSizeOuter(0));
+            if (view === "combined") {
+                plot.append("g")
+                    .attr("class", "trend-axis")
+                    .attr("transform", `translate(${innerWidth},0)`)
+                    .call(d3.axisRight(countY).ticks(6).tickFormat(d3.format(".2s")).tickSizeOuter(0));
+            }
             svg.append("text")
                 .attr("class", "trend-axis-title")
                 .attr("text-anchor", "middle")
@@ -120,9 +187,16 @@
                 .attr("class", "trend-axis-title")
                 .attr("text-anchor", "middle")
                 .attr("transform", `translate(15,${margin.top + innerHeight / 2}) rotate(-90)`)
-                .text("Change from 2011");
+                .text(showLines ? "Change from 2011" : "Total hospitalisations");
+            if (view === "combined") {
+                svg.append("text")
+                    .attr("class", "trend-axis-title")
+                    .attr("text-anchor", "middle")
+                    .attr("transform", `translate(${width - 10},${margin.top + innerHeight / 2}) rotate(90)`)
+                    .text("Total hospitalisations");
+            }
 
-            series.forEach(item => {
+            if (showLines) series.forEach(item => {
                 const line = d3.line()
                     .x(row => x(row.year))
                     .y(row => y(row[`${item.key}Change`]));
@@ -158,7 +232,7 @@
                     .on("blur", hideTooltip);
             });
 
-            const annotationRow = rows.find(row => row.year === 2020);
+            const annotationRow = showLines && rows.find(row => row.year === 2020);
             if (annotationRow) {
                 const xPoint = x(annotationRow.year);
                 const yPoint = y(annotationRow.firstNationsChange);
@@ -212,10 +286,40 @@
                 tooltip.style.transform = "translate(-50%, -110%)";
             }
 
+            function showBarTooltip(event, row, bar) {
+                const rowRect = chartWrap.getBoundingClientRect();
+                const barRect = bar.getBoundingClientRect();
+                const left = event
+                    ? event.clientX - rowRect.left
+                    : barRect.left + barRect.width / 2 - rowRect.left;
+                const top = event
+                    ? event.clientY - rowRect.top
+                    : barRect.top - rowRect.top;
+                tooltip.innerHTML = `<strong style="color:#0f766e">Total hospitalisations · ${row.year}</strong>
+                    <div>Total: ${number(row.total)}</div>
+                    <div>First Nations people: ${number(row.firstNations)}</div>
+                    <div>Non-Indigenous: ${number(row.nonIndigenous)}</div>`;
+                tooltip.style.display = "block";
+                tooltip.style.left = `${Math.max(100, Math.min(rowRect.width - 100, left))}px`;
+                tooltip.style.top = `${Math.max(8, top)}px`;
+                tooltip.style.transform = "translate(-50%, -110%)";
+            }
+
             function hideTooltip() {
                 tooltip.style.display = "none";
             }
         }
+
+        viewSelect.addEventListener("change", () => {
+            view = viewSelect.value;
+            legend.querySelectorAll(".trend-legend-line").forEach(entry => {
+                entry.hidden = view === "overview";
+            });
+            totalEntry.hidden = view === "difference";
+            totalEntry.querySelector(".trend-bar-swatch").style.backgroundColor =
+                view === "overview" ? "#60a5fa" : "#2563eb";
+            draw();
+        });
 
         if (typeof ResizeObserver === "function") {
             resizeObserver = new ResizeObserver(draw);
@@ -273,6 +377,7 @@
             rows.sort((a, b) => a.year - b.year);
             const baseline = rows[0];
             rows.forEach(row => {
+                row.total = row.firstNations + row.nonIndigenous;
                 row.firstNationsChange = (row.firstNations / baseline.firstNations - 1) * 100;
                 row.nonIndigenousChange = (row.nonIndigenous / baseline.nonIndigenous - 1) * 100;
             });
