@@ -110,12 +110,6 @@
         `Annual hospitalised injury counts in ${select.value}, 2011 to 2021`
       );
 
-    svg
-      .append("title")
-      .text(
-        `Annual hospitalised injury counts in ${select.value}, 2011–2021`
-      );
-
     const x = d3
       .scaleLinear()
       .domain([2011, 2021])
@@ -210,13 +204,20 @@
           tooltip.textContent =
             `${d.jurisdiction} · ${d.year}: ` +
             `${numberFormat(d.count)} hospitalised injuries`;
+          const point = event.type === "focus"
+            ? event.currentTarget.getBoundingClientRect()
+            : null;
+          tooltip.style.left = `${point ? point.right + 8 : event.clientX + 12}px`;
+          tooltip.style.top = `${point ? point.top : event.clientY + 12}px`;
           tooltip.classList.add("visible");
+          tooltip.setAttribute("aria-hidden", "false");
         }
       })
       .on("mouseleave blur", () => {
         if (tooltip) {
           tooltip.textContent = "";
           tooltip.classList.remove("visible");
+          tooltip.setAttribute("aria-hidden", "true");
         }
       });
 
@@ -260,10 +261,6 @@
         "aria-label",
         "Absolute change in hospitalised injury counts by state and territory, 2011 to 2021"
       );
-
-    svg
-      .append("title")
-      .text("Change in hospitalised injury counts, 2021 minus 2011");
 
     svg
       .append("g")

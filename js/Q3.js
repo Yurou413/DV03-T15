@@ -106,7 +106,6 @@
 
             svg.attr("viewBox", `0 0 ${width} ${height}`).attr("height", height);
             svg.selectAll("title, desc").remove();
-            svg.append("title").text(`Hospitalisations by age group in ${year}`);
             svg.append("desc").text("Mirrored horizontal bars compare First Nations people on the left and non-Indigenous people on the right, with age groups centered.");
             plot.selectAll("*").remove();
             plot.append("text")
@@ -288,7 +287,6 @@
 
             svg.attr("viewBox", `0 0 ${width} ${height}`).attr("height", height);
             svg.selectAll("title, desc, .age-trend-axis-title").remove();
-            svg.append("title").text(`Age ${ageGroup} hospitalisation share by Indigenous status`);
             svg.append("desc").text(`Line chart showing the annual share of hospitalisations in age group ${ageGroup} for First Nations and non-Indigenous people.`);
 
             plot.selectAll("*").remove();

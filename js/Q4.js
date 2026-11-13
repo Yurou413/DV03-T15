@@ -92,7 +92,6 @@
                 svg.attr("viewBox", "0 0 320 270")
                     .attr("aria-label", `${status.label} regional hospitalised injury distribution in ${year}`);
                 svg.selectAll("title, desc").remove();
-                svg.append("title").text(`${status.label}, ${year}`);
                 svg.append("desc").text(data.map(item => `${item.key}: ${number(item.count)} (${percent(item.share)}%)`).join(". "));
 
                 const group = svg.selectAll("g.q4-donut-slices")
