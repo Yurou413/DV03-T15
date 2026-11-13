@@ -4,7 +4,7 @@
         ? new URL("../Final%20Data/First Nation Hospitalised Injuries/Q3.csv", scriptUrl).href
         : null;
     const stylesheetUrl = scriptUrl
-        ? new URL("./q3-age-butterfly.css", scriptUrl).href
+        ? new URL("./q3-age-charts.css", scriptUrl).href
         : null;
     const ageGroups = ["0-7", "8-16", "17-25", "26-39", "40-64", "65+"];
     const statuses = [
@@ -46,19 +46,19 @@
                     </div>
                     <p class="age-butterfly-note">Bars use the same count scale on both sides. Hover over or focus a bar for its count and share of that population's annual total.</p>
                 </section>
-                <section class="age-trend-chart" aria-label="Age group trend by Indigenous status">
-                    <h3>Age-group trend by Indigenous status</h3>
-                    <p class="age-trend-intro">Compare the selected age group's share of annual hospitalisations across calendar years.</p>
-                    <div class="age-trend-controls">
-                        <label class="control-label" for="age-trend-select">Age group:</label>
-                        <select id="age-trend-select" class="select-input"></select>
+                <section class="age-heatmap-chart" aria-label="Age-group hospitalisation heat maps by Indigenous status">
+                    <h3>Age-group distribution by calendar year</h3>
+                    <p class="age-heatmap-intro">Each cell shows an age group's share of its population's annual hospitalisations. Both heat maps use the same color scale.</p>
+                    <div class="age-heatmap-legend" aria-label="Share of annual hospitalisations color scale">
+                        <span class="age-heatmap-min"></span>
+                        <span class="age-heatmap-gradient" aria-hidden="true"></span>
+                        <span class="age-heatmap-max"></span>
                     </div>
-                    <div class="age-trend-legend" aria-label="Indigenous status legend"></div>
-                    <div class="age-trend-wrap">
-                        <div class="age-trend-tooltip" role="status" aria-live="polite"></div>
-                        <svg role="img" aria-label="Line chart comparing the selected age-group share over time by Indigenous status"></svg>
+                    <div class="age-heatmap-wrap">
+                        <div class="age-heatmap-tooltip" role="status" aria-live="polite"></div>
+                        <svg role="group" aria-label="Heat maps with age groups on the horizontal axis and calendar years on the vertical axis"></svg>
                     </div>
-                    <p class="age-trend-note">Lines show age-group share, not raw counts. Hover over or focus a point to see its count and share.</p>
+                    <p class="age-heatmap-note">Darker red indicates a larger share. Hover over or focus a cell to see the count and share.</p>
                 </section>
             </div>`;
 
@@ -232,137 +232,140 @@
             window.addEventListener("resize", draw);
         }
         draw();
-        renderAgeGroupTrend(chart, rows);
+        renderAgeGroupHeatmap(chart, rows);
     }
 
-    function renderAgeGroupTrend(container, rows) {
-        const chart = container.querySelector(".age-trend-chart");
-        const ageSelect = chart.querySelector("#age-trend-select");
-        const legend = chart.querySelector(".age-trend-legend");
-        const chartWrap = chart.querySelector(".age-trend-wrap");
-        const tooltip = chart.querySelector(".age-trend-tooltip");
-        const svg = d3.select(chart.querySelector(".age-trend-wrap svg"));
+    function renderAgeGroupHeatmap(container, rows) {
+        const chart = container.querySelector(".age-heatmap-chart");
+        const chartWrap = chart.querySelector(".age-heatmap-wrap");
+        const tooltip = chart.querySelector(".age-heatmap-tooltip");
+        const svg = d3.select(chart.querySelector(".age-heatmap-wrap svg"));
         const number = d3.format(",");
         const percent = d3.format(".1f");
         const years = [...new Set(rows.map(row => row.year))].sort((a, b) => a - b);
+        const maxShare = d3.max(rows, row =>
+            d3.max(ageGroups, ageGroup => row.values[ageGroup] / row.total * 100)
+        );
+        const color = d3.scaleQuantize()
+            .domain([0, maxShare])
+            .range(d3.schemeYlOrRd[7]);
 
-        ageGroups.forEach(ageGroup => ageSelect.add(new Option(ageGroup, ageGroup)));
-        ageSelect.value = "17-25";
-        statuses.forEach(status => {
-            const item = document.createElement("span");
-            item.className = "age-trend-legend-item";
-            item.innerHTML = `<span class="age-trend-swatch" style="background:${status.color}"></span><span>${status.label}</span>`;
-            legend.appendChild(item);
-        });
+        chart.querySelector(".age-heatmap-min").textContent = "0%";
+        chart.querySelector(".age-heatmap-max").textContent = `${percent(maxShare)}%`;
 
         function draw() {
             const width = Math.floor(chartWrap.getBoundingClientRect().width);
             if (!width) return;
 
-            const ageGroup = ageSelect.value;
-            const data = rows.map(row => ({
-                ...row,
-                share: row.values[ageGroup] / row.total * 100
-            }));
-            const height = width < 480 ? 320 : 360;
-            const margin = { top: 18, right: 18, bottom: 52, left: width < 380 ? 54 : 62 };
-            const innerWidth = width - margin.left - margin.right;
-            const innerHeight = height - margin.top - margin.bottom;
-            const maxShare = d3.max(data, row => row.share);
-            const x = d3.scaleLinear()
-                .domain([years[0] - 0.25, years[years.length - 1] + 0.25])
-                .range([0, innerWidth]);
-            const y = d3.scaleLinear()
-                .domain([0, maxShare * 1.1])
-                .nice()
-                .range([innerHeight, 0]);
-            const tickYears = width < 520
-                ? years.filter((year, index) => index % 2 === 0 || index === years.length - 1)
-                : years;
-            const plot = svg.selectAll("g.age-trend-plot")
-                .data([null])
-                .join("g")
-                .attr("class", "age-trend-plot")
-                .attr("transform", `translate(${margin.left},${margin.top})`);
+            const stacked = width < 640;
+            const height = stacked ? 690 : 460;
+            const margin = { top: 28, right: 12, bottom: 54, left: 54 };
+            const panelGap = 30;
+            const panelWidth = stacked
+                ? width - margin.left - margin.right
+                : (width - margin.left - margin.right - panelGap) / 2;
+            const panelHeight = stacked
+                ? (height - margin.top - margin.bottom - panelGap) / 2
+                : height - margin.top - margin.bottom;
+            const plotLeft = 60;
+            const plotRight = 6;
+            const plotTop = 24;
+            const plotBottom = 44;
+            const plotWidth = panelWidth - plotLeft - plotRight;
+            const plotHeight = panelHeight - plotTop - plotBottom;
 
+            svg.selectAll("*").remove();
             svg.attr("viewBox", `0 0 ${width} ${height}`).attr("height", height);
-            svg.selectAll("title, desc, .age-trend-axis-title").remove();
-            svg.append("desc").text(`Line chart showing the annual share of hospitalisations in age group ${ageGroup} for First Nations and non-Indigenous people.`);
+            svg.append("desc").text("Two heat maps compare the annual share of hospitalisations by age group for First Nations and non-Indigenous people. Both use the same color scale.");
 
-            plot.selectAll("*").remove();
-            plot.append("g")
-                .attr("class", "age-trend-grid")
-                .call(d3.axisLeft(y).ticks(5).tickSize(-innerWidth).tickFormat(""));
-            plot.append("g")
-                .attr("class", "age-trend-axis")
-                .attr("transform", `translate(0,${innerHeight})`)
-                .call(
-                    d3.axisBottom(x)
-                        .tickValues(tickYears)
-                        .tickFormat(d3.format("d"))
-                        .tickSizeOuter(0)
-                );
-            plot.append("g")
-                .attr("class", "age-trend-axis")
-                .call(d3.axisLeft(y).ticks(5).tickFormat(value => `${d3.format(".0f")(value)}%`).tickSizeOuter(0));
-            svg.append("text")
-                .attr("class", "age-trend-axis-title")
-                .attr("text-anchor", "middle")
-                .attr("x", margin.left + innerWidth / 2)
-                .attr("y", height - 8)
-                .text("Calendar year");
-            svg.append("text")
-                .attr("class", "age-trend-axis-title")
-                .attr("text-anchor", "middle")
-                .attr("transform", `translate(15,${margin.top + innerHeight / 2}) rotate(-90)`)
-                .text("Share of annual hospitalisations");
-
-            const line = d3.line()
-                .x(row => x(row.year))
-                .y(row => y(row.share));
-
-            statuses.forEach(status => {
-                const statusRows = data
+            statuses.forEach((status, index) => {
+                const panelX = stacked
+                    ? margin.left
+                    : margin.left + index * (panelWidth + panelGap);
+                const panelY = stacked
+                    ? margin.top + index * (panelHeight + panelGap)
+                    : margin.top;
+                const panel = svg.append("g")
+                    .attr("class", "age-heatmap-panel")
+                    .attr("transform", `translate(${panelX},${panelY})`);
+                const x = d3.scaleBand()
+                    .domain(ageGroups)
+                    .range([0, plotWidth])
+                    .paddingInner(0.06)
+                    .paddingOuter(0.02);
+                const y = d3.scaleBand()
+                    .domain(years)
+                    .range([0, plotHeight])
+                    .paddingInner(0.08)
+                    .paddingOuter(0.02);
+                const statusRows = rows
                     .filter(row => row.status === status.key)
                     .sort((a, b) => a.year - b.year);
+                const cells = statusRows.flatMap(row => ageGroups.map(ageGroup => ({
+                    year: row.year,
+                    ageGroup,
+                    count: row.values[ageGroup],
+                    share: row.values[ageGroup] / row.total * 100
+                })));
+                const plot = panel.append("g")
+                    .attr("transform", `translate(${plotLeft},${plotTop})`);
 
-                plot.append("path")
-                    .datum(statusRows)
-                    .attr("class", "age-trend-line")
-                    .attr("stroke", status.color)
-                    .attr("d", line);
-
-                plot.selectAll(`.age-trend-point-${statuses.indexOf(status)}`)
-                    .data(statusRows)
-                    .join("circle")
-                    .attr("class", `age-trend-point-${statuses.indexOf(status)}`)
-                    .attr("cx", row => x(row.year))
-                    .attr("cy", row => y(row.share))
-                    .attr("r", 4)
-                    .attr("fill", status.color)
+                panel.append("text")
+                    .attr("class", "age-heatmap-status")
+                    .attr("x", panelWidth / 2)
+                    .attr("y", 13)
+                    .text(status.label);
+                plot.selectAll(".age-heatmap-cell")
+                    .data(cells)
+                    .join("rect")
+                    .attr("class", "age-heatmap-cell")
+                    .attr("x", cell => x(cell.ageGroup))
+                    .attr("y", cell => y(cell.year))
+                    .attr("width", x.bandwidth())
+                    .attr("height", y.bandwidth())
+                    .attr("fill", cell => color(cell.share))
                     .attr("tabindex", 0)
                     .attr("role", "img")
-                    .attr("aria-label", row => `${status.label}, ${row.year}, age ${ageGroup}: ${number(row.values[ageGroup])} hospitalisations, ${percent(row.share)} percent`)
-                    .on("pointerenter pointermove", function (event, row) {
-                        showTooltip(event, row, status, this);
+                    .attr("aria-label", cell => `${status.label}, ${cell.year}, age ${cell.ageGroup}: ${number(cell.count)} hospitalisations, ${percent(cell.share)} percent of annual total`)
+                    .on("pointerenter pointermove", function (event, cell) {
+                        showTooltip(event, cell, status, this);
                     })
                     .on("pointerleave", hideTooltip)
-                    .on("focus", function (event, row) {
-                        showTooltip(null, row, status, this);
+                    .on("focus", function (event, cell) {
+                        showTooltip(null, cell, status, this);
                     })
                     .on("blur", hideTooltip);
+
+                plot.append("g")
+                    .attr("class", "age-heatmap-axis")
+                    .attr("transform", `translate(0,${plotHeight})`)
+                    .call(d3.axisBottom(x).tickSizeOuter(0));
+                plot.append("g")
+                    .attr("class", "age-heatmap-axis")
+                    .call(d3.axisLeft(y).tickFormat(d3.format("d")).tickSizeOuter(0));
+                panel.append("text")
+                    .attr("class", "age-heatmap-axis-title")
+                    .attr("text-anchor", "middle")
+                    .attr("x", plotLeft + plotWidth / 2)
+                    .attr("y", plotTop + plotHeight + 37)
+                    .text("Age group");
+                panel.append("text")
+                    .attr("class", "age-heatmap-axis-title")
+                    .attr("text-anchor", "middle")
+                    .attr("transform", `translate(12,${plotTop + plotHeight / 2}) rotate(-90)`)
+                    .text("Calendar year");
             });
 
-            function showTooltip(event, row, status, point) {
+            function showTooltip(event, cell, status, target) {
                 const wrapRect = chartWrap.getBoundingClientRect();
-                const pointRect = point.getBoundingClientRect();
+                const targetRect = target.getBoundingClientRect();
                 const left = event
                     ? event.clientX - wrapRect.left
-                    : pointRect.left + pointRect.width / 2 - wrapRect.left;
+                    : targetRect.left + targetRect.width / 2 - wrapRect.left;
                 const top = event
                     ? event.clientY - wrapRect.top
-                    : pointRect.top - wrapRect.top;
-                tooltip.textContent = `${row.year} · ${status.label} · Age ${ageGroup}\n${number(row.values[ageGroup])} hospitalisations (${percent(row.share)}%)`;
+                    : targetRect.top - wrapRect.top;
+                tooltip.textContent = `${cell.year} · ${status.label}\nAge ${cell.ageGroup}: ${number(cell.count)} hospitalisations (${percent(cell.share)}%)`;
                 tooltip.style.display = "block";
                 tooltip.style.left = `${Math.max(110, Math.min(wrapRect.width - 110, left))}px`;
                 tooltip.style.top = `${Math.max(8, top)}px`;
@@ -374,7 +377,6 @@
             }
         }
 
-        ageSelect.addEventListener("change", draw);
         if (typeof ResizeObserver === "function") {
             new ResizeObserver(draw).observe(chartWrap);
         } else {
@@ -401,7 +403,7 @@
         const stylesheet = document.createElement("link");
         stylesheet.rel = "stylesheet";
         stylesheet.href = stylesheetUrl;
-        stylesheet.onerror = () => showError(container, "Could not load q3-age-butterfly.css.");
+        stylesheet.onerror = () => showError(container, "Could not load q3-age-charts.css.");
         document.head.appendChild(stylesheet);
 
         d3.csv(dataUrl, row => {

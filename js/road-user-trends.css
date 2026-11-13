@@ -42,9 +42,9 @@
 }
 
 .road-chart-swatch {
-    width: 1rem;
-    height: 1rem;
-    border-radius: 3px;
+    width: 1.25rem;
+    height: 3px;
+    border-radius: 2px;
 }
 
 .road-chart-wrap {
@@ -83,16 +83,32 @@
     font-size: 12px;
 }
 
-.road-chart-bar {
+.road-chart-line {
+    fill: none;
+    stroke-width: 2.7px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.road-chart-line.other {
+    stroke-width: 1.7px;
+    opacity: .72;
+}
+
+.road-chart-point {
+    stroke: var(--road-chart-surface);
+    stroke-width: 1.5px;
     cursor: pointer;
-    transition: opacity .12s ease;
+    transition: r .12s ease;
 }
 
-.road-chart-bar:hover {
-    opacity: .75;
+.road-chart-point.other {
+    opacity: .72;
 }
 
-.road-chart-bar:focus {
+.road-chart-point:hover,
+.road-chart-point:focus {
+    r: 5;
     stroke: var(--road-chart-text);
     stroke-width: 2;
     outline: none;

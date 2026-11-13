@@ -4,13 +4,13 @@
         ? new URL("../Final%20Data/First Nation Hospitalised Injuries/Q2.csv", scriptUrl).href
         : null;
     const stylesheetUrl = scriptUrl
-        ? new URL("./road-user-grouped-bar.css", scriptUrl).href
+        ? new URL("./road-user-trends.css", scriptUrl).href
         : null;
-    const allCategoriesLabel = "All road users";
     const statuses = [
-        { key: "First Nations people", label: "First Nations people", color: "#0f766e" },
-        { key: "Non-Indigenous", label: "Non-Indigenous", color: "#7c3aed" }
+        { key: "First Nations people", label: "First Nations people" },
+        { key: "Non-Indigenous", label: "Non-Indigenous" }
     ];
+    const remainingColor = "#94a3b8";
 
     function showError(container, message) {
         container.innerHTML = "";
@@ -33,64 +33,66 @@
 
         container.innerHTML = `
             <div class="road-user-chart">
-                <p class="road-chart-intro">Annual hospitalised road-user counts by Indigenous status. Choose a road-user type to compare.</p>
+                <p class="road-chart-intro">Annual hospitalised injury counts for each road-user category. The five largest categories use distinct colors; remaining categories are grey.</p>
                 <div class="road-chart-controls">
-                    <label class="control-label" for="road-category-select">Road-user type:</label>
-                    <select id="road-category-select" class="select-input"></select>
+                    <label class="control-label" for="road-status-select">Population group:</label>
+                    <select id="road-status-select" class="select-input"></select>
                 </div>
-                <div class="road-chart-legend" aria-label="Chart legend"></div>
+                <div class="road-chart-legend" aria-label="Road-user category legend"></div>
                 <div class="road-chart-wrap">
                     <div class="road-chart-tooltip" role="status" aria-live="polite"></div>
-                    <svg role="img" aria-label="Grouped bar chart comparing annual road-user hospitalisations by Indigenous status"></svg>
+                    <svg role="group" aria-label="Multi-line chart of annual road-user hospitalisations"></svg>
                 </div>
-                <p class="road-chart-note">Each year groups counts for First Nations and non-Indigenous people. Hover over or focus a bar for its count.</p>
+                <p class="road-chart-note">The five categories with the highest combined count across the displayed years are highlighted for the selected group. Hover over or focus a point to see its count.</p>
             </div>`;
 
         const chart = container.querySelector(".road-user-chart");
-        const categorySelect = chart.querySelector("#road-category-select");
+        const statusSelect = chart.querySelector("#road-status-select");
         const legend = chart.querySelector(".road-chart-legend");
         const chartWrap = chart.querySelector(".road-chart-wrap");
         const tooltip = chart.querySelector(".road-chart-tooltip");
         const svg = d3.select(chart.querySelector("svg"));
         const number = d3.format(",");
+        const color = d3.scaleOrdinal(categories, d3.schemeTableau10);
 
-        categorySelect.add(new Option(allCategoriesLabel, allCategoriesLabel));
-        categories.forEach(category => categorySelect.add(new Option(category, category)));
         statuses.forEach(status => {
-            const item = document.createElement("span");
-            item.className = "road-chart-legend-item";
-            item.innerHTML = `<span class="road-chart-swatch" style="background:${status.color}"></span><span>${status.label}</span>`;
-            legend.appendChild(item);
+            statusSelect.add(new Option(status.label, status.key));
         });
 
         function draw() {
             const width = Math.floor(chartWrap.getBoundingClientRect().width);
             if (!width) return;
 
-            const height = width < 480 ? 360 : 410;
-            const margin = { top: 18, right: 18, bottom: 58, left: width < 380 ? 58 : 70 };
+            const height = width < 480 ? 380 : 420;
+            const margin = { top: 18, right: 18, bottom: 56, left: width < 380 ? 60 : 72 };
             const innerWidth = width - margin.left - margin.right;
             const innerHeight = height - margin.top - margin.bottom;
-            const selectedCategory = categorySelect.value;
-            const bars = years.flatMap(year => statuses.map(status => {
-                const row = rowsByYear.get(year).find(item => item.status === status.key);
-                return {
-                    year,
-                    status,
-                    count: selectedCategory === allCategoriesLabel
-                        ? row.total
-                        : row.values[selectedCategory]
-                };
+            const status = statuses.find(item => item.key === statusSelect.value);
+            const statusRows = rows
+                .filter(row => row.status === status.key)
+                .sort((a, b) => a.year - b.year);
+            const rankedCategories = categories
+                .map(category => ({
+                    category,
+                    total: d3.sum(statusRows, row => row.values[category])
+                }))
+                .sort((a, b) => b.total - a.total);
+            const topCategories = new Set(rankedCategories.slice(0, 5).map(item => item.category));
+            const series = categories.map(category => ({
+                category,
+                values: statusRows.map(row => ({
+                    year: row.year,
+                    count: row.values[category]
+                })),
+                color: topCategories.has(category) ? color(category) : remainingColor,
+                isTop: topCategories.has(category)
             }));
-            const maxCount = d3.max(bars, item => item.count) || 1;
-            const x = d3.scaleBand()
-                .domain(years)
-                .range([0, innerWidth])
-                .padding(0.2);
-            const xStatus = d3.scaleBand()
-                .domain(statuses.map(status => status.key))
-                .range([0, x.bandwidth()])
-                .padding(0.08);
+            const displaySeries = [...series].sort((a, b) => Number(a.isTop) - Number(b.isTop));
+            const values = displaySeries.flatMap(item => item.values);
+            const maxCount = d3.max(values, item => item.count) || 1;
+            const x = d3.scaleLinear()
+                .domain(d3.extent(years))
+                .range([0, innerWidth]);
             const y = d3.scaleLinear()
                 .domain([0, maxCount])
                 .nice()
@@ -98,33 +100,36 @@
             const tickYears = width < 520
                 ? years.filter((year, index) => index % 2 === 0 || index === years.length - 1)
                 : years;
-            const plot = svg.selectAll("g.road-chart-plot")
-                .data([null])
-                .join("g")
-                .attr("class", "road-chart-plot")
-                .attr("transform", `translate(${margin.left},${margin.top})`);
 
+            legend.innerHTML = "";
+            rankedCategories.forEach(item => {
+                const entry = document.createElement("span");
+                entry.className = "road-chart-legend-item";
+                const swatch = document.createElement("span");
+                swatch.className = "road-chart-swatch";
+                swatch.style.backgroundColor = topCategories.has(item.category) ? color(item.category) : remainingColor;
+                const label = document.createElement("span");
+                label.textContent = item.category;
+                entry.append(swatch, label);
+                legend.appendChild(entry);
+            });
+
+            svg.selectAll("*").remove();
             svg.attr("viewBox", `0 0 ${width} ${height}`).attr("height", height);
-            svg.selectAll("title, desc").remove();
-            svg.selectAll(".road-chart-axis-title").remove();
-            svg.append("desc").text("Grouped vertical bars compare annual hospitalised injury counts for First Nations and non-Indigenous people.");
+            svg.attr("aria-label", `Multi-line chart of annual road-user hospitalisations for ${status.label}`);
+            svg.append("desc").text(`Each line shows annual counts for a road-user category for ${status.label}. The five highest-count categories are highlighted in color; remaining categories are grey.`);
 
-            plot.selectAll("*").remove();
+            const plot = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
             plot.append("g")
                 .attr("class", "road-chart-grid")
-                .call(d3.axisLeft(y).ticks(5).tickSize(-innerWidth).tickFormat(""));
+                .call(d3.axisLeft(y).ticks(4).tickSize(-innerWidth).tickFormat(""));
             plot.append("g")
                 .attr("class", "road-chart-axis road-chart-x-axis")
                 .attr("transform", `translate(0,${innerHeight})`)
-                .call(
-                    d3.axisBottom(x)
-                        .tickValues(tickYears)
-                        .tickFormat(d3.format("d"))
-                        .tickSizeOuter(0)
-                );
+                .call(d3.axisBottom(x).tickValues(tickYears).tickFormat(d3.format("d")).tickSizeOuter(0));
             plot.append("g")
                 .attr("class", "road-chart-axis road-chart-y-axis")
-                .call(d3.axisLeft(y).ticks(5).tickFormat(number).tickSizeOuter(0));
+                .call(d3.axisLeft(y).ticks(4).tickFormat(number).tickSizeOuter(0));
             svg.append("text")
                 .attr("class", "road-chart-axis-title")
                 .attr("text-anchor", "middle")
@@ -137,38 +142,48 @@
                 .attr("transform", `translate(15,${margin.top + innerHeight / 2}) rotate(-90)`)
                 .text("Hospitalised injuries");
 
-            plot.selectAll(".road-chart-bar")
-                .data(bars)
-                .join("rect")
-                .attr("class", "road-chart-bar")
-                .attr("x", item => x(item.year) + xStatus(item.status.key))
-                .attr("y", item => y(item.count))
-                .attr("width", xStatus.bandwidth())
-                .attr("height", item => Math.max(0, innerHeight - y(item.count)))
-                .attr("rx", 2)
-                .attr("fill", item => item.status.color)
-                .attr("tabindex", 0)
-                .attr("role", "img")
-                .attr("aria-label", item => `${item.year}, ${item.status.label}, ${selectedCategory}: ${number(item.count)} hospitalised injuries`)
-                .on("pointerenter pointermove", function (event, item) {
-                    showTooltip(event, item, this);
-                })
-                .on("pointerleave", hideTooltip)
-                .on("focus", function (event, item) {
-                    showTooltip(null, item, this);
-                })
-                .on("blur", hideTooltip);
+            const line = d3.line()
+                .x(item => x(item.year))
+                .y(item => y(item.count));
+            displaySeries.forEach(item => {
+                const categoryIndex = categories.indexOf(item.category);
+                plot.append("path")
+                    .datum(item.values)
+                    .attr("class", `road-chart-line ${item.isTop ? "top" : "other"}`)
+                    .attr("stroke", item.color)
+                    .attr("d", line);
 
-            function showTooltip(event, item, bar) {
+                plot.selectAll(`.road-chart-point-${categoryIndex}`)
+                    .data(item.values)
+                    .join("circle")
+                    .attr("class", `road-chart-point road-chart-point-${categoryIndex} ${item.isTop ? "top" : "other"}`)
+                    .attr("cx", value => x(value.year))
+                    .attr("cy", value => y(value.count))
+                    .attr("r", item.isTop ? 3.5 : 2.5)
+                    .attr("fill", item.color)
+                    .attr("tabindex", 0)
+                    .attr("role", "img")
+                    .attr("aria-label", value => `${item.category}, ${value.year}, ${status.label}: ${number(value.count)} hospitalised injuries`)
+                    .on("pointerenter pointermove", function (event, value) {
+                        showTooltip(event, value, item, this, status);
+                    })
+                    .on("pointerleave", hideTooltip)
+                    .on("focus", function (event, value) {
+                        showTooltip(null, value, item, this, status);
+                    })
+                    .on("blur", hideTooltip);
+            });
+
+            function showTooltip(event, value, item, point, selectedStatus) {
                 const wrapRect = chartWrap.getBoundingClientRect();
-                const barRect = bar.getBoundingClientRect();
+                const pointRect = point.getBoundingClientRect();
                 const left = event
                     ? event.clientX - wrapRect.left
-                    : barRect.left + barRect.width / 2 - wrapRect.left;
+                    : pointRect.left + pointRect.width / 2 - wrapRect.left;
                 const top = event
                     ? event.clientY - wrapRect.top
-                    : barRect.top - wrapRect.top;
-                tooltip.textContent = `${item.year} · ${item.status.label} · ${selectedCategory}\n${number(item.count)} hospitalised injuries`;
+                    : pointRect.top - wrapRect.top;
+                tooltip.textContent = `${value.year} · ${item.category} · ${selectedStatus.label}\n${number(value.count)} hospitalised injuries`;
                 tooltip.style.display = "block";
                 tooltip.style.left = `${Math.max(100, Math.min(wrapRect.width - 100, left))}px`;
                 tooltip.style.top = `${Math.max(8, top)}px`;
@@ -180,7 +195,7 @@
             }
         }
 
-        categorySelect.addEventListener("change", draw);
+        statusSelect.addEventListener("change", draw);
         if (typeof ResizeObserver === "function") {
             new ResizeObserver(draw).observe(chartWrap);
         } else {
@@ -192,7 +207,7 @@
     function init() {
         const container = document.querySelector("#q2-chart");
         if (!container) {
-            console.error("Road-user grouped bar chart: add an element with id=\"q2-chart\" before loading this script.");
+            console.error("Road-user trend chart: add an element with id=\"q2-chart\" before loading Q2.js.");
             return;
         }
         if (!window.d3) {
@@ -207,7 +222,7 @@
         const stylesheet = document.createElement("link");
         stylesheet.rel = "stylesheet";
         stylesheet.href = stylesheetUrl;
-        stylesheet.onerror = () => showError(container, "Could not load road-user-grouped-bar.css.");
+        stylesheet.onerror = () => showError(container, "Could not load road-user-trends.css.");
         document.head.appendChild(stylesheet);
 
         d3.csv(dataUrl, row => {
@@ -227,7 +242,7 @@
             const categories = rows.length
                 ? Object.keys(rows[0].values)
                 : [];
-            if (!rows.length || rows.some(row =>
+            if (!rows.length || !categories.length || rows.some(row =>
                 !statuses.some(status => status.key === row.status) ||
                 !Number.isInteger(row.year) ||
                 !Number.isFinite(row.total) ||
@@ -238,7 +253,7 @@
             }
             renderChart(container, rows, categories);
         }).catch(error => {
-            console.error("Road-user grouped bar chart failed to load:", error);
+            console.error("Road-user trend chart failed to load:", error);
             showError(container, `Could not load the road-user data: ${error.message}`);
         });
     }
