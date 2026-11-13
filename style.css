@@ -548,7 +548,7 @@ p {
 
 /* D3 Tooltip */
 .d3-tooltip {
-    position: absolute;
+    position: fixed;
     padding: 0.5rem 0.85rem;
     font-size: 0.8rem;
     font-family: var(--font-sans);

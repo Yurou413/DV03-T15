@@ -97,7 +97,6 @@
 
             svg.selectAll("*").remove();
             svg.attr("viewBox", `0 0 ${width} ${height}`).attr("height", height);
-            svg.append("title").text("Hospitalised injury counts by Indigenous status, indexed to 2011");
             svg.append("desc").text("Two lines show percentage change from 2011 to 2021. Hover or focus points for exact counts and annual changes.");
 
             const plot = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);

@@ -107,7 +107,6 @@
             svg.attr("viewBox", `0 0 ${width} ${height}`).attr("height", height);
             svg.selectAll("title, desc").remove();
             svg.selectAll(".road-chart-axis-title").remove();
-            svg.append("title").text(`${selectedCategory} hospitalisations by Indigenous status, 2011 to 2021`);
             svg.append("desc").text("Grouped vertical bars compare annual hospitalised injury counts for First Nations and non-Indigenous people.");
 
             plot.selectAll("*").remove();
