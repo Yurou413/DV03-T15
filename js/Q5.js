@@ -10,6 +10,9 @@
   const changePath = scriptUrl
     ? new URL("../Final%20Data/State%20and%20Territory%20Hospitalisation%20Injury%20Publication/state_territory_change_2011_2021.csv", scriptUrl).href
     : "Final%20Data/State%20and%20Territory%20Hospitalisation%20Injury%20Publication/state_territory_change_2011_2021.csv";
+  const mapPath = scriptUrl
+    ? new URL("../Data/australia-states-territories-2021.geojson", scriptUrl).href
+    : "Data/australia-states-territories-2021.geojson";
 
   const nameMap = {
     ACT: "Australian Capital Territory",
@@ -28,17 +31,19 @@
     const trendContainer = document.getElementById("trend-chart");
     const changeContainer = document.getElementById("change-chart");
     const jurisdictionSelect = document.getElementById("jurisdiction-select");
+    const mapContainer = document.getElementById("jurisdiction-map");
 
-    if (!trendContainer || !changeContainer || !jurisdictionSelect) {
-      console.warn("Q5: Required DOM containers (#trend-chart, #change-chart, #jurisdiction-select) not found.");
+    if (!trendContainer || !changeContainer || !mapContainer || !jurisdictionSelect) {
+      console.warn("Q5: Required chart containers or jurisdiction control were not found.");
       return;
     }
 
     Promise.all([
       d3.csv(annualPath),
-      d3.csv(changePath)
+      d3.csv(changePath),
+      d3.json(mapPath)
     ])
-      .then(([annualRows, changeRows]) => {
+      .then(([annualRows, changeRows, mapData]) => {
         const annual = annualRows.map(d => ({
           year: +d.Year,
           code: d.State,
@@ -49,6 +54,8 @@
         const changes = changeRows.map(d => ({
           code: d.State,
           jurisdiction: nameMap[d.State] || d.State,
+          startCount: +d["2011+Sum(Sum(Injury_Count))"],
+          endCount: +d["2021+Sum(Sum(Injury_Count))"],
           change: +d.Change
         }));
 
@@ -62,6 +69,7 @@
 
         drawTrend(annual);
         drawChanges(changes);
+        drawMap(mapData, changes);
 
         jurisdictionSelect.addEventListener("change", () => drawTrend(annual));
       })
@@ -70,7 +78,7 @@
         if (message) {
           message.hidden = false;
           message.textContent =
-            "The chart data could not be loaded. Check that both CSV files are in the Final Data folder. " +
+            "The Q5 data or Australia map could not be loaded. Check the CSV files and the Data/australia-states-territories-2021.geojson file. " +
             error.message;
         }
         console.error("Q5 Load Error:", error);
@@ -333,6 +341,120 @@
       .attr("y", height - 8)
       .attr("text-anchor", "middle")
       .text("Change in cases (2021 minus 2011)");
+  }
+
+
+  function drawMap(geojson, rows) {
+    const container = d3.select("#jurisdiction-map").html("");
+    const width = 940;
+    const height = 680;
+    const svg = container
+      .append("svg")
+      .attr("viewBox", `0 0 ${width} ${height}`)
+      .attr("role", "img")
+      .attr("aria-label", "Map of Australia showing change in hospitalised injury cases by state and territory from 2011 to 2021");
+
+    const byName = new Map(rows.map(d => [d.jurisdiction, d]));
+    const projection = d3.geoIdentity().reflectY(true).fitExtent([[26, 18], [width - 26, height - 86]], geojson);
+    const path = d3.geoPath(projection);
+    const maxIncrease = d3.max(rows, d => Math.max(0, d.change)) || 1;
+    const increaseColor = d3.scaleSequential(
+      [0, maxIncrease],
+      t => d3.interpolatePurples(0.3 + 0.7 * t)
+    );
+    const tooltip = document.getElementById("trend-tooltip");
+
+    const features = svg.append("g").attr("class", "map-features");
+    features.selectAll("path")
+      .data(geojson.features)
+      .join("path")
+      .attr("class", "map-state")
+      .attr("d", path)
+      .attr("fill", feature => {
+        const value = byName.get(feature.properties.state_name_2021);
+        if (!value) return "#e5e7eb";
+        return value.change < 0 ? "#ef4444" : increaseColor(value.change);
+      })
+      .attr("tabindex", 0)
+      .attr("role", "button")
+      .attr("aria-label", feature => {
+        const value = byName.get(feature.properties.state_name_2021);
+        return value
+          ? `${value.jurisdiction}: ${numberFormat(value.startCount)} cases in 2011, ${numberFormat(value.endCount)} in 2021, change ${value.change > 0 ? "plus " : "minus "}${numberFormat(Math.abs(value.change))}`
+          : feature.properties.state_name_2021;
+      })
+      .on("mouseenter focus", function(event, feature) {
+        const value = byName.get(feature.properties.state_name_2021);
+        if (!value || !tooltip) return;
+        tooltip.textContent = `${value.jurisdiction} · 2011: ${numberFormat(value.startCount)} · 2021: ${numberFormat(value.endCount)} · Change: ${value.change > 0 ? "+" : "−"}${numberFormat(Math.abs(value.change))}`;
+        const point = event.type === "focus" ? this.getBoundingClientRect() : null;
+        tooltip.style.left = `${point ? point.right + 8 : event.clientX + 12}px`;
+        tooltip.style.top = `${point ? point.top : event.clientY + 12}px`;
+        tooltip.classList.add("visible");
+        tooltip.setAttribute("aria-hidden", "false");
+      })
+      .on("mouseleave blur", () => {
+        if (!tooltip) return;
+        tooltip.textContent = "";
+        tooltip.classList.remove("visible");
+        tooltip.setAttribute("aria-hidden", "true");
+      });
+
+    // ACT is too small to distinguish at this scale, so add a Canberra locator.
+    const act = byName.get("Australian Capital Territory");
+    const canberra = projection([149.13, -35.28]);
+    if (act && canberra) {
+      svg.append("line")
+        .attr("class", "map-act-leader")
+        .attr("x1", canberra[0]).attr("y1", canberra[1])
+        .attr("x2", canberra[0] - 22).attr("y2", canberra[1] - 18);
+      svg.append("circle")
+        .attr("class", "map-act-marker")
+        .attr("cx", canberra[0]).attr("cy", canberra[1]).attr("r", 4)
+        .attr("tabindex", 0)
+        .attr("aria-label", `Canberra locator for Australian Capital Territory. Change: ${act.change > 0 ? "+" : "−"}${numberFormat(Math.abs(act.change))}`)
+        .on("mouseenter focus", function(event) {
+          if (!tooltip) return;
+          tooltip.textContent = `Australian Capital Territory · 2011: ${numberFormat(act.startCount)} · 2021: ${numberFormat(act.endCount)} · Change: +${numberFormat(act.change)}`;
+          const point = event.type === "focus" ? this.getBoundingClientRect() : null;
+          tooltip.style.left = `${point ? point.right + 8 : event.clientX + 12}px`;
+          tooltip.style.top = `${point ? point.top : event.clientY + 12}px`;
+          tooltip.classList.add("visible");
+          tooltip.setAttribute("aria-hidden", "false");
+        })
+        .on("mouseleave blur", () => {
+          if (!tooltip) return;
+          tooltip.textContent = "";
+          tooltip.classList.remove("visible");
+          tooltip.setAttribute("aria-hidden", "true");
+        });
+      svg.append("text")
+        .attr("class", "map-act-label")
+        .attr("x", canberra[0] - 26).attr("y", canberra[1] - 21)
+        .attr("text-anchor", "end")
+        .text("ACT / Canberra");
+    }
+
+    const legend = svg.append("g")
+      .attr("class", "map-legend")
+      .attr("transform", `translate(${width / 2 - 190},${height - 48})`);
+    const stops = d3.range(0, 6).map(i => i / 5);
+    legend.append("rect")
+      .attr("x", 0).attr("y", 0).attr("width", 18).attr("height", 14)
+      .attr("fill", "#ef4444");
+    legend.append("text").attr("x", 24).attr("y", 12)
+      .text(`Decrease (${numberFormat(d3.min(rows, d => d.change))})`);
+    legend.selectAll(".increase-swatch")
+      .data(stops)
+      .join("rect")
+      .attr("class", "increase-swatch")
+      .attr("x", (d, i) => 145 + i * 24)
+      .attr("y", 0)
+      .attr("width", 25)
+      .attr("height", 14)
+      .attr("fill", d => increaseColor(d * maxIncrease));
+    legend.append("text").attr("x", 145).attr("y", 28)
+      .text(`Increase (0 to +${numberFormat(maxIncrease)} cases)`);
   }
 
   if (document.readyState === "loading") {

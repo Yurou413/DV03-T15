@@ -169,7 +169,7 @@
                  ========================================================= -->
             <article class="chart-section" id="q5">
                 <div class="chart-header">
-                    <span class="chart-tag">Line Chart & Horizontal Bar Chart</span>
+                    <span class="chart-tag">Line Chart, Horizontal Bar Chart & Choropleth Map</span>
                     <h3>Q5 State and Territory Comparison</h3>
                     <p class="chart-description">
                         How did non-fatal hospitalised road traffic injury counts vary across Australian states and
@@ -189,6 +189,14 @@
 
                 <!-- Chart 5B: Absolute Change Horizontal Bar Chart -->
                 <div id="change-chart" class="responsive-svg-container chart-container" style="margin-top: 2rem;"></div>
+
+                <!-- Chart 5C: State and Territory Map of Absolute Change -->
+                <div class="q5-map-heading">
+                    <h4>Geographic Pattern of Change</h4>
+                    <p class="chart-description">Change in hospitalised injury cases from 2011 to 2021. Select or hover over a state or territory to view its counts.</p>
+                </div>
+                <div id="jurisdiction-map" class="responsive-svg-container chart-container q5-map-container"></div>
+                <p class="map-attribution">Boundary data: <a href="https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-3-july-2021-june-2026/access-and-downloads/digital-boundary-files" target="_blank" rel="noopener">Australian Bureau of Statistics, ASGS Edition 3 (2021)</a>, State and Territory boundaries.</p>
 
                 <!-- Q5 Interactive Hover Tooltip -->
                 <div id="trend-tooltip" class="d3-tooltip" role="tooltip" aria-hidden="true"></div>

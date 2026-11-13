@@ -689,3 +689,71 @@ footer strong {
         flex-direction: column;
     }
 }
+
+
+/* Q5 Australia change map */
+.q5-map-heading {
+    margin: 2rem 0 0.5rem;
+}
+
+.q5-map-heading h4 {
+    margin: 0 0 0.35rem;
+    color: var(--text-primary);
+    font-size: 1.05rem;
+}
+
+.q5-map-container {
+    min-height: 400px;
+}
+
+.map-state {
+    stroke: #514362;
+    stroke-width: 1.35px;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    cursor: pointer;
+    transition: filter 0.15s ease, stroke-width 0.15s ease;
+}
+
+.map-state:hover,
+.map-state:focus {
+    stroke: #171322;
+    stroke-width: 2.6px;
+    filter: brightness(1.08);
+    outline: none;
+}
+
+.map-act-leader {
+    stroke: #344054;
+    stroke-width: 1.2px;
+    stroke-dasharray: 3 2;
+}
+
+.map-act-marker {
+    fill: #6d28d9;
+    stroke: #fff;
+    stroke-width: 2px;
+    cursor: pointer;
+}
+
+.map-act-label {
+    fill: #344054;
+    font-size: 12px;
+    font-weight: 600;
+    paint-order: stroke;
+    stroke: #fff;
+    stroke-width: 3px;
+    stroke-linejoin: round;
+}
+
+.map-legend text {
+    fill: var(--text-secondary);
+    font-size: 11px;
+}
+
+.map-attribution {
+    margin: 0.25rem 0 0;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    text-align: right;
+}
